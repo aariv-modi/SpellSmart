@@ -1,0 +1,30 @@
+{
+	"cli": {
+		"version": ">= 0.43.0"
+	},
+	"build": {
+		"development": {
+			"developmentClient": true,
+			"distribution": "internal"
+		},
+		"preview": {
+			"distribution": "internal",
+			"android": {
+				"buildType": "apk"
+			}
+		},
+		"production": {
+			"android": {
+				"gradleCommand": ":app:bundleRelease"
+			}
+		}
+	},
+	"submit": {
+		"production": {
+			"ios": {
+				"appleId": "theawesomesome@gmail.com",
+				"ascAppId": "6480376688"
+			}
+		}
+	}
+}
