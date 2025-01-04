@@ -88,7 +88,7 @@ export const deleteWord = async (word, listName) => {
     const data = JSON.parse(await AsyncStorage.getItem('userData'));
     const listIndex = data.spellingLists.findIndex(list => list.name === listName);
 
-    data.spellingLists[listIndex].words = userData.spellingLists[listIndex].words.filter(word => word !== wordToRemove);
+    data.spellingLists[listIndex].words = data.spellingLists[listIndex].words.filter(w => w !== word);
     await AsyncStorage.setItem('userData', JSON.stringify(data));
 };
 

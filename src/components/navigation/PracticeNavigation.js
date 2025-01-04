@@ -25,7 +25,7 @@ const PracticeNavigation = () => {
 			<PracticeStack.Screen
 				name="ListType"
 				component={ListTypeScreen}
-				options={{ unmountOnBlur: true, title: 'Practice' }}
+				options={{ title: 'Practice' }}
 			/>
 			<PracticeStack.Screen
 				name="ListSelection"

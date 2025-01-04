@@ -85,6 +85,7 @@ const BookmarksScreen = () => {
                                     autoComplete="off"
                                     autoCapitalize='none'
                                     autoCorrect={false}
+                                    autoFocus={true}
                                     returnKeyType="done"
                                     onSubmitEditing={handleAddBookmark}
                                 />

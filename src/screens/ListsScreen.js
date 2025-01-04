@@ -113,6 +113,7 @@ const ListsScreen = ({ navigation }) => {
                                     placeholder="Enter list name"
                                     textAlign="center"
                                     autoComplete="off"
+                                    autoFocus={true}
                                     autoCapitalize='none'
                                     autoCorrect={false}
                                     returnKeyType="done"

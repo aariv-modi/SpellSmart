@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import { View, Dimensions, TouchableWithoutFeedback, ScrollView, TouchableOpacity, Modal, TextInput, StyleSheet, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { getList, deleteWord, addWord } from '../utils/HelperFunctions';
@@ -13,11 +14,10 @@ const ListDetailsScreen = ({ navigation, route }) => {
     const [words, setWords] = useState([]);
     const [newWord, setNewWord] = useState('');
     const [isAddWordModalVisible, setIsAddWordModalVisible] = useState(false);
-    
-    // Function to delete a word from the list
+
     const handleDeleteWord = useCallback(async (wordToDelete) => {
+        await deleteWord(wordToDelete, listName);
         setWords(words.filter(word => word !== wordToDelete));
-        await deleteWord(listName, wordToDelete);
     }, [words, listName]);
 
     // Function to add a new word
@@ -43,12 +43,14 @@ const ListDetailsScreen = ({ navigation, route }) => {
         setNewWord('');
     }, []);
 
-    useEffect(() => {
-        const fetchList = async () => {
-            setWords(await getList(listName));
-        };
-        fetchList();
-    }, [listName]);
+    useFocusEffect(
+        useCallback(() => {
+            const fetchList = async () => {
+                setWords(await getList(listName));
+            };
+            fetchList();
+        }, [listName])
+    );
 
     const renderListItems = () => {
         return words.map((item, key) => (
@@ -94,6 +96,7 @@ const ListDetailsScreen = ({ navigation, route }) => {
                                     placeholder="Enter a new word"
                                     textAlign="center"
                                     autoComplete="off"
+                                    autoFocus={true}
                                     autoCapitalize='none'
                                     autoCorrect={false}
                                     returnKeyType="done"

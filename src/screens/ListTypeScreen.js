@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useCallback } from "react"
+import { useFocusEffect } from '@react-navigation/native';
 import { View, StyleSheet, Dimensions, Modal, TouchableOpacity, Animated, TouchableWithoutFeedback } from "react-native"
 import { getBookmarkedWords, getCustomLists, getMissedWords } from "../utils/HelperFunctions"
 import ListTypeCard from "../components/ListTypeCard"
@@ -65,10 +66,6 @@ const ListTypeScreen = function ({ navigation }) {
     const [warningMessage, setWarningMessage] = useState('');
     const [showWarning, setShowWarning] = useState(false);
 
-    useEffect(() => {
-        checkAvailableLists();
-    }, []);
-
     const checkAvailableLists = async () => {
         const customLists = await getCustomLists();
         const bookmarks = await getBookmarkedWords();
@@ -78,6 +75,12 @@ const ListTypeScreen = function ({ navigation }) {
         setHasBookmarks(bookmarks.length > 0);
         setHasMissedWords(missedWords.length > 0);
     };
+
+    useFocusEffect(
+        useCallback(() => {
+            checkAvailableLists();
+        }, [])
+    );
 
     const showWarningMessage = (message) => {
         setWarningMessage(message);
