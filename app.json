@@ -1,58 +1,67 @@
 {
-	"expo": {
-		"newArchEnabled": true,
-		"name": "SpellSmart",
-		"slug": "SpellSmart",
-		"plugins": [
-			[
-				"expo-image-picker",
-				{
-					"photosPermission": "The app accesses your photos to let you create your own word lists."
-				}
-			],
-			[
-				"expo-font",
-				{
-					"fonts": [
-						"./assets/fonts/Recursive-Bold.ttf",
-						"./assets/fonts/Inter-SemiBold.ttf"
-					]
-				}
-			],
-			"expo-asset",
-			"expo-splash-screen"
-		],
-		"version": "12.0.0",
-		"orientation": "portrait",
-		"icon": "./assets/images/logo-512x512-r.png",
-		"splash": {
-			"backgroundColor": "#1a1a1a"
-		},
-		"updates": {
-			"fallbackToCacheTimeout": 0
-		},
-		"assetBundlePatterns": [
-			"**/*"
-		],
-		"ios": {
-			"bundleIdentifier": "com.awesomeaariv.SpellSmart",
-			"buildNumber": "21",
-			"supportsTablet": false
-		},
-		"android": {
-			"adaptiveIcon": {
-				"foregroundImage": "./assets/images/logo-1024x1024.png"
-			},
-			"package": "com.SpellSmart",
-			"versionCode": 19
-		},
-		"web": {
-			"favicon": "./assets/images/logo-48x48.png"
-		},
-		"extra": {
-			"eas": {
-				"projectId": "d453fba4-d8ab-4df0-aa8c-7f5e6507b18a"
-			}
-		}
-	}
+  "expo": {
+    "newArchEnabled": true,
+    "name": "SpellSmart",
+    "slug": "SpellSmart",
+    "plugins": [
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app accesses your photos to let you create your own word lists."
+        }
+      ],
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "./assets/fonts/Recursive-Bold.ttf",
+            "./assets/fonts/Inter-SemiBold.ttf"
+          ]
+        }
+      ],
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#1a1a1a",
+          "image": "./assets/images/logo-512x512-r.png",
+          "imageWidth": 200
+        }
+      ],
+      "expo-asset"
+    ],
+    "version": "12.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/logo-512x512-r.png",
+    "splash": {
+      "image": "./assets/images/logo-512x512-r.png",
+      "backgroundColor": "#1a1a1a"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "bundleIdentifier": "com.awesomeaariv.SpellSmart",
+      "buildNumber": "21",
+      "supportsTablet": false
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/logo-1024x1024.png",
+        "backgroundColor": "#FFFFFF"
+      },
+      "package": "com.SpellSmart",
+      "versionCode": 21
+    },
+    "web": {
+      "favicon": "./assets/images/logo48x48.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "d453fba4-d8ab-4df0-aa8c-7f5e6507b18a"
+      }
+    }
+  }
 }
