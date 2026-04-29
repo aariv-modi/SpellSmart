@@ -23,17 +23,17 @@
         "expo-splash-screen",
         {
           "backgroundColor": "#1a1a1a",
-          "image": "./assets/images/logo-512x512-r.png",
+          "image": "./assets/images/android.jpg",
           "imageWidth": 200
         }
       ],
       "expo-asset"
     ],
-    "version": "12.0.0",
+    "version": "13.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/logo-512x512-r.png",
+    "icon": "./assets/images/android.jpg",
     "splash": {
-      "image": "./assets/images/logo-512x512-r.png",
+      "image": "./assets/images/android.jpg",
       "backgroundColor": "#1a1a1a"
     },
     "updates": {
@@ -44,19 +44,25 @@
     ],
     "ios": {
       "bundleIdentifier": "com.awesomeaariv.SpellSmart",
-      "buildNumber": "21",
-      "supportsTablet": false
+      "buildNumber": "22",
+      "supportsTablet": false,
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/logo-1024x1024.png",
+        "foregroundImage": "./assets/images/android-1024.jpg",
         "backgroundColor": "#FFFFFF"
       },
       "package": "com.SpellSmart",
-      "versionCode": 21
+      "versionCode": 22,
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "web": {
-      "favicon": "./assets/images/logo48x48.png"
+      "favicon": "./assets/images/android-48.jpg"
     },
     "extra": {
       "eas": {

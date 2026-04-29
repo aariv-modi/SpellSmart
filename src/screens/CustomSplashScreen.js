@@ -103,7 +103,7 @@ const CustomSplashScreen = ({ children, onComplete }) => {
 				]}
 			>
 				<Image
-					source={require('../../assets/images/logo-512x512-r.png')}
+					source={require('../../assets/images/android.jpg')}
 					style={styles.beeLogo}
 				/>
 			</Animated.View>
