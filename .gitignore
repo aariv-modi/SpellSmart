@@ -128,3 +128,14 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+# Pre-bake script output (mp3s before R2 upload)
+audio-output/
+
+# Cloudflare Wrangler
+.wrangler/
+.dev.vars
+
+# Service account keys (defense in depth — don't commit anywhere in the repo)
+*-service-account*.json
+gcp-*.json

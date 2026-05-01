@@ -67,7 +67,10 @@
     "extra": {
       "eas": {
         "projectId": "d453fba4-d8ab-4df0-aa8c-7f5e6507b18a"
-      }
+      },
+      "listsBaseUrl": null,
+      "audioBaseUrl": null,
+      "ttsProxyUrl": null
     }
   }
 }
