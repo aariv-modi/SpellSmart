@@ -1,0 +1,8 @@
+name = "spellsmart-tts"
+main = "src/index.js"
+compatibility_date = "2026-04-01"
+
+# GCP service account credentials are stored as encrypted Worker secrets.
+# Set them with:
+#   wrangler secret put GCP_CLIENT_EMAIL
+#   wrangler secret put GCP_PRIVATE_KEY
