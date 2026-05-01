@@ -5,6 +5,7 @@ import TopBar from '../TopBar';
 // Main Lists Screen
 import ListsScreen from '../../screens/ListsScreen';
 import ListDetailsScreen from '../../screens/ListDetailsScreen';
+import UploadListScreen from '../../screens/UploadListScreen';
 
 const ListsStack = createStackNavigator();
 
@@ -24,6 +25,11 @@ const ListsNavigation = () => {
 				name="ListDetails"
 				component={ListDetailsScreen}
 				options={({ route }) => ({ title: route.params?.listName, barColor: '#ce82ff' })}
+			/>
+			<ListsStack.Screen
+				name="UploadList"
+				component={UploadListScreen}
+				options={{ title: 'Upload Image', barColor: '#ce82ff' }}
 			/>
 		</ListsStack.Navigator>
 	);

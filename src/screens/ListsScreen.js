@@ -92,6 +92,10 @@ const ListsScreen = ({ navigation }) => {
                 <Ionicons name="add" size={height * 0.035} color="white" />
             </TouchableOpacity>
 
+            <TouchableOpacity style={styles.fabSecondary} onPress={() => navigation.navigate('UploadList')}>
+                <Ionicons name="image" size={height * 0.03} color="white" />
+            </TouchableOpacity>
+
             <Modal
                 animationType="slide"
                 transparent={true}
@@ -149,6 +153,22 @@ const styles = StyleSheet.create({
         backgroundColor: '#ce82ff',
         right: height * 0.03,
         bottom: height * 0.03, // Changed from top to bottom
+        justifyContent: 'center',
+        alignItems: 'center',
+        elevation: 5,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+    },
+    fabSecondary: {
+        position: 'absolute',
+        width: height * 0.06,
+        height: height * 0.06,
+        borderRadius: 100,
+        backgroundColor: '#9145bf',
+        right: height * 0.12,
+        bottom: height * 0.035,
         justifyContent: 'center',
         alignItems: 'center',
         elevation: 5,
