@@ -27,7 +27,8 @@
           "imageWidth": 200
         }
       ],
-      "expo-asset"
+      "expo-asset",
+      "expo-audio"
     ],
     "version": "13.0.0",
     "orientation": "portrait",

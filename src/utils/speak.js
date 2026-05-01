@@ -1,4 +1,4 @@
-import { Audio } from 'expo-av';
+import { createAudioPlayer } from 'expo-audio';
 import * as Speech from 'expo-speech';
 import Constants from 'expo-constants';
 
@@ -15,20 +15,21 @@ const BAKED_WORDS = new Set([
 const audioBaseUrl = Constants.expoConfig?.extra?.audioBaseUrl;
 const ttsProxyUrl = Constants.expoConfig?.extra?.ttsProxyUrl;
 
-const playRemote = async (uri) => {
-  const { sound } = await Audio.Sound.createAsync({ uri }, { shouldPlay: true });
-  return new Promise((resolve, reject) => {
-    sound.setOnPlaybackStatusUpdate(async (status) => {
-      if (status.error) {
-        await sound.unloadAsync();
-        reject(new Error(status.error));
-      } else if (status.didJustFinish) {
-        await sound.unloadAsync();
-        resolve();
-      }
+const playRemote = (uri) =>
+  new Promise((resolve, reject) => {
+    const player = createAudioPlayer({ uri });
+    let timeoutId;
+    const finish = (fn) => {
+      clearTimeout(timeoutId);
+      player.remove();
+      fn();
+    };
+    player.addListener('playbackStatusUpdate', (status) => {
+      if (status.didJustFinish) finish(resolve);
     });
+    timeoutId = setTimeout(() => finish(() => reject(new Error('Audio timeout'))), 10000);
+    player.play();
   });
-};
 
 const speakViaOS = (text) => {
   const plain = text.replace(/<\/?[^>]+>/g, '');

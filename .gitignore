@@ -129,6 +129,9 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
+# Expo local state (devices, dev server settings)
+.expo/
+
 # Pre-bake script output (mp3s before R2 upload)
 audio-output/
 

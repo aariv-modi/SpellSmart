@@ -17,7 +17,7 @@ const UploadImageScreen = function ({ navigation }) {
 	const pickImage = async () => {
 		setLoading(1)
 		let result = await ImagePicker.launchImageLibraryAsync({
-			mediaTypes: ImagePicker.MediaTypeOptions.All,
+			mediaTypes: ['images'],
 			allowsEditing: false,
 			aspect: [4, 3],
 			quality: 1,
