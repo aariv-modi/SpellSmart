@@ -1,4 +1,4 @@
-import { createAudioPlayer } from 'expo-audio';
+import { createAudioPlayer, setAudioModeAsync } from 'expo-audio';
 import * as Speech from 'expo-speech';
 import Constants from 'expo-constants';
 
@@ -12,8 +12,13 @@ const BAKED_WORDS = new Set([
   ...bundled7th8th,
 ]);
 
-const audioBaseUrl = Constants.expoConfig?.extra?.audioBaseUrl;
-const ttsProxyUrl = Constants.expoConfig?.extra?.ttsProxyUrl;
+const asUrl = (v) => (typeof v === 'string' && v.length > 0 ? v : null);
+const audioBaseUrl = asUrl(Constants.expoConfig?.extra?.audioBaseUrl);
+const ttsProxyUrl = asUrl(Constants.expoConfig?.extra?.ttsProxyUrl);
+
+// Mix mode lets expo-audio playback and expo-speech TTS share the iOS audio
+// session without serializing through it (which adds multi-second delays).
+setAudioModeAsync({ playsInSilentMode: true, interruptionMode: 'mixWithOthers' }).catch(() => {});
 
 const playRemote = (uri) =>
   new Promise((resolve, reject) => {
@@ -27,20 +32,15 @@ const playRemote = (uri) =>
     player.addListener('playbackStatusUpdate', (status) => {
       if (status.didJustFinish) finish(resolve);
     });
-    timeoutId = setTimeout(() => finish(() => reject(new Error('Audio timeout'))), 10000);
+    timeoutId = setTimeout(() => finish(() => reject(new Error('Audio timeout'))), 5000);
     player.play();
   });
 
-const speakViaOS = (text) => {
-  const plain = text.replace(/<\/?[^>]+>/g, '');
-  return new Promise((resolve) => {
-    Speech.speak(plain, {
-      onDone: resolve,
-      onStopped: resolve,
-      onError: resolve,
-    });
+const speakViaOS = (text) =>
+  new Promise((resolve) => {
+    const plain = text.replace(/<\/?[^>]+>/g, '');
+    Speech.speak(plain, { onDone: resolve, onStopped: resolve, onError: resolve });
   });
-};
 
 export const speak = async (text) => {
   if (audioBaseUrl && BAKED_WORDS.has(text)) {
