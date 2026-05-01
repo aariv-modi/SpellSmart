@@ -37,7 +37,8 @@
       "backgroundColor": "#1a1a1a"
     },
     "updates": {
-      "fallbackToCacheTimeout": 0
+      "fallbackToCacheTimeout": 0,
+      "url": "https://u.expo.dev/d453fba4-d8ab-4df0-aa8c-7f5e6507b18a"
     },
     "assetBundlePatterns": [
       "**/*"
@@ -71,6 +72,9 @@
       "listsBaseUrl": "https://pub-85787839b47240eaa2120d34de5874ca.r2.dev/lists",
       "audioBaseUrl": "https://pub-85787839b47240eaa2120d34de5874ca.r2.dev/audio",
       "ttsProxyUrl": null
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
     }
   }
 }
