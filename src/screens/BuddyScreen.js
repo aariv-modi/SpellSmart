@@ -4,7 +4,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { Ionicons } from '@expo/vector-icons';
 import { scaleFont } from "../utils/responsiveTextSize";
-import { getBookmarkedWords, speak } from "../utils/HelperFunctions";
+import { getBookmarkedWords } from "../utils/HelperFunctions";
+import { speak } from "../utils/speak";
 
 import ProgressBar from '../components/ProgressBar';
 import RecursiveText from "../components/RecursiveText";

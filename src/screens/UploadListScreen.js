@@ -3,14 +3,6 @@ import { View, TextInput, ActivityIndicator, Alert } from "react-native"
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as ImagePicker from 'expo-image-picker'
 
-import { DetectDocumentTextCommand, TextractClient } from "@aws-sdk/client-textract"
-import 'react-native-url-polyfill/auto'
-import 'react-native-get-random-values'
-import { ReadableStream } from 'web-streams-polyfill'
-globalThis.ReadableStream = ReadableStream
-import { Buffer } from "buffer"
-globalThis.Buffer = Buffer
-
 import Button from '../components/Button'
 import IconBar from "../components/IconBar"
 import styles from '../styles/UploadListScreen'
@@ -39,33 +31,11 @@ const UploadImageScreen = function ({ navigation }) {
 	}
 
 	const onRunOCR = async () => {
-		const client = new TextractClient({
-			region: "us-east-1",
-			credentials: {
-				accessKeyId: '***REMOVED***',
-				secretAccessKey: '***REMOVED***'
-			}
-		})
-
-		const params = {
-			Document: {
-				Bytes: Buffer.from(selectedImage.current, 'base64')
-			},
-			FeatureTypes: ["LAYOUT"]
-		}
-		const command = new DetectDocumentTextCommand(params)
-		try {
-			const response = await client.send(command)
-			for (let i = 0; i < response.Blocks.length; i++) {
-				if (response.Blocks[i].BlockType == "WORD") {
-					words.push(response.Blocks[i].Text)
-					addWord(response.Blocks[i].Text)
-				}
-			}
-			setLoading(2)
-		} catch (error) {
-			console.log("err: ", error)
-		}
+		Alert.alert(
+			'Image upload temporarily unavailable',
+			'We\'re upgrading the image-to-list feature. Please use a typed list for now.'
+		)
+		setLoading(0)
 	}
 
 	const handleTextChange = (text) => {

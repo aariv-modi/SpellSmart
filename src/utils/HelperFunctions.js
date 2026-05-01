@@ -1,12 +1,4 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import AWS from 'aws-sdk';
-import { Audio } from 'expo-av';
-
-AWS.config.update({
-    accessKeyId: '***REMOVED***',
-    secretAccessKey: '***REMOVED***',
-    region: 'us-east-1'
-})
 
 export const getBookmarkedWords = async () => {
     const data = JSON.parse(await AsyncStorage.getItem('userData'));
@@ -132,49 +124,3 @@ export const checkNewBuddy = async () => {
     const data = JSON.parse(await AsyncStorage.getItem('userData'));
     return data["newBuddyMode"]
 };
-
-export const speak = async (text, engine = 'generative') => {
-    const polly = new AWS.Polly();
-    const textType = text.includes('<speak>') ? 'ssml' : 'text';
-
-    try {
-        const params = {
-            Text: text,
-            OutputFormat: 'mp3',
-            VoiceId: 'Matthew',
-            Engine: engine,
-            TextType: textType
-        };
-
-        const data = await new Promise((resolve, reject) => {
-            polly.synthesizeSpeech(params, (error, data) => {
-                if (error) {
-                    reject(error);
-                } else {
-                    resolve(data);
-                }
-            });
-        });
-
-        const audioBase64 = data.AudioStream.toString('base64');
-        const audioUri = `data:audio/mp3;base64,${audioBase64}`;
-        const { sound } = await Audio.Sound.createAsync(
-            { uri: audioUri },
-            { shouldPlay: true }
-        );
-
-        await sound.playAsync();
-
-        return new Promise((resolve) => {
-            sound.setOnPlaybackStatusUpdate(async (status) => {
-                if (status.didJustFinish) {
-                    await sound.unloadAsync();
-                    resolve();
-                }
-            });
-        });
-    } catch (error) {
-        console.error('Error playing audio:', error);
-        throw error;
-    }
-}; 
