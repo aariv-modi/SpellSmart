@@ -5,7 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from '@expo/vector-icons';
 import { scaleFont } from "../utils/responsiveTextSize";
 import { getBookmarkedWords } from "../utils/HelperFunctions";
-import { speak } from "../utils/speak";
+import { speak, stopSpeak } from "../utils/speak";
 
 import ProgressBar from '../components/ProgressBar';
 import RecursiveText from "../components/RecursiveText";
@@ -81,6 +81,7 @@ const BuddyScreen = ({ navigation, route }) => {
         };
 
         initializeScreen();
+        return stopSpeak;
     }, []);
 
     return (

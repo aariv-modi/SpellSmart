@@ -20,29 +20,105 @@ const ttsProxyUrl = asUrl(Constants.expoConfig?.extra?.ttsProxyUrl);
 // session without serializing through it (which adds multi-second delays).
 setAudioModeAsync({ playsInSilentMode: true, interruptionMode: 'mixWithOthers' }).catch(() => {});
 
+// Worker cold starts can take several seconds; only kill the request if we
+// haven't started receiving audio. Once playback begins, we trust it to finish.
+const LOAD_TIMEOUT_MS = 8000;
+const PLAY_BUFFER_MS = 5000;
+const OS_SPEECH_SAFETY_MS = 15000;
+
+let activePlayer = null;
+let activeAbort = null;
+let callToken = 0;
+
 const playRemote = (uri) =>
   new Promise((resolve, reject) => {
-    const player = createAudioPlayer({ uri });
-    let timeoutId;
-    const finish = (fn) => {
-      clearTimeout(timeoutId);
-      player.remove();
-      fn();
+    let player;
+    try {
+      player = createAudioPlayer({ uri });
+    } catch (e) {
+      return reject(e);
+    }
+
+    if (activePlayer && activePlayer !== player) {
+      try { activePlayer.remove(); } catch {}
+    }
+    activePlayer = player;
+
+    let started = false;
+    let settled = false;
+    let loadTimer;
+    let playTimer;
+
+    const settle = (fn, value) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(loadTimer);
+      clearTimeout(playTimer);
+      if (activePlayer === player) activePlayer = null;
+      if (activeAbort === abort) activeAbort = null;
+      try { player.remove(); } catch {}
+      fn(value);
     };
+
+    const abort = () => settle(reject, new Error('Aborted'));
+    activeAbort = abort;
+
     player.addListener('playbackStatusUpdate', (status) => {
-      if (status.didJustFinish) finish(resolve);
+      if (settled) return;
+      if (!started && (status.playing || status.isLoaded)) {
+        started = true;
+        clearTimeout(loadTimer);
+        const ms = (status.duration > 0 ? status.duration * 1000 : 30000) + PLAY_BUFFER_MS;
+        playTimer = setTimeout(() => settle(reject, new Error('Play timeout')), ms);
+      }
+      if (status.didJustFinish) settle(resolve);
     });
-    timeoutId = setTimeout(() => finish(() => reject(new Error('Audio timeout'))), 5000);
-    player.play();
+
+    loadTimer = setTimeout(() => {
+      if (!started) settle(reject, new Error('Load timeout'));
+    }, LOAD_TIMEOUT_MS);
+
+    try {
+      player.play();
+    } catch (e) {
+      settle(reject, e);
+    }
   });
 
 const speakViaOS = (text) =>
   new Promise((resolve) => {
     const plain = text.replace(/<\/?[^>]+>/g, '');
-    Speech.speak(plain, { onDone: resolve, onStopped: resolve, onError: resolve });
+    let settled = false;
+    const settle = () => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(safety);
+      resolve();
+    };
+    const safety = setTimeout(settle, OS_SPEECH_SAFETY_MS);
+    Speech.speak(plain, { onDone: settle, onStopped: settle, onError: settle });
   });
 
+export const stopSpeak = () => {
+  callToken++;
+  if (activeAbort) {
+    activeAbort();
+    activeAbort = null;
+  }
+  if (activePlayer) {
+    try { activePlayer.remove(); } catch {}
+    activePlayer = null;
+  }
+  try { Speech.stop(); } catch {}
+};
+
 export const speak = async (text) => {
+  if (typeof text !== 'string' || text.length === 0) return;
+
+  stopSpeak();
+  const myToken = callToken;
+  const stillMine = () => myToken === callToken;
+
   if (audioBaseUrl && BAKED_WORDS.has(text)) {
     try {
       await playRemote(`${audioBaseUrl}/${encodeURIComponent(text)}.mp3`);
@@ -51,6 +127,7 @@ export const speak = async (text) => {
       // R2 fetch or playback failed — fall through
     }
   }
+  if (!stillMine()) return;
 
   if (ttsProxyUrl) {
     try {
@@ -60,6 +137,7 @@ export const speak = async (text) => {
       // worker unreachable — fall through
     }
   }
+  if (!stillMine()) return;
 
   await speakViaOS(text);
 };
