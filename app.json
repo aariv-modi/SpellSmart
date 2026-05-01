@@ -72,7 +72,7 @@
       },
       "listsBaseUrl": "https://pub-85787839b47240eaa2120d34de5874ca.r2.dev/lists",
       "audioBaseUrl": "https://pub-85787839b47240eaa2120d34de5874ca.r2.dev/audio",
-      "ttsProxyUrl": null
+      "ttsProxyUrl": "https://spellsmart-tts.awesomeaariv.workers.dev"
     },
     "runtimeVersion": {
       "policy": "appVersion"
