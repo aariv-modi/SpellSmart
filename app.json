@@ -28,9 +28,18 @@
         }
       ],
       "expo-asset",
-      "expo-audio"
+      "expo-audio",
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "deploymentTarget": "16.0"
+          }
+        }
+      ],
+      "@react-native-community/datetimepicker"
     ],
-    "version": "13.0.0",
+    "version": "14.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/android.jpg",
     "splash": {
@@ -46,7 +55,7 @@
     ],
     "ios": {
       "bundleIdentifier": "com.awesomeaariv.SpellSmart",
-      "buildNumber": "22",
+      "buildNumber": "23",
       "supportsTablet": false,
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
@@ -58,7 +67,7 @@
         "backgroundColor": "#FFFFFF"
       },
       "package": "com.SpellSmart",
-      "versionCode": 22,
+      "versionCode": 23,
       "permissions": [
         "android.permission.RECORD_AUDIO"
       ]

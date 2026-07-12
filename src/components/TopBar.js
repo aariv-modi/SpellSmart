@@ -10,7 +10,7 @@ const { width, height } = Dimensions.get('window');
 const TopBar = ({ options, back = false }) => {
     const navigation = useNavigation();
     const currentScreenName = useRoute().name;
-    const screensWithoutBackButton = ['ListType', 'ListsMain', 'BookmarksMain', 'HelpMain', 'Solo', 'Buddy'];
+    const screensWithoutBackButton = ['HomeMain', 'ListsMain', 'SettingsMain', 'Solo', 'Buddy'];
     const [backOpacity, setBackOpacity] = useState(1);
 
     return (
@@ -33,15 +33,15 @@ const TopBar = ({ options, back = false }) => {
                 marginTop: height * 0.1,
             }}>
                 {!screensWithoutBackButton.includes(currentScreenName) ? (
-                    <Pressable 
+                    <Pressable
                         onPressIn={() => setBackOpacity(0.5)}
                         onPressOut={() => setBackOpacity(1)}
                         onPress={() => navigation.goBack()}
                         style={{
                             position: 'absolute',
                             left: height * 0.01,
-                            padding: 8,  // Add some padding for better touch target
-                            backgroundColor: 'transparent', // Ensure background is transparent
+                            padding: 8,
+                            backgroundColor: 'transparent',
                         }}
                     >
                         <Ionicons

@@ -1,57 +1,48 @@
 import React, { useEffect, useRef } from 'react';
-import { Animated, Image, Dimensions, StyleSheet, View } from 'react-native';
+import { Animated, Image, Dimensions, StyleSheet } from 'react-native';
 
 const { width, height } = Dimensions.get('window');
 
-const CustomSplashScreen = ({ children, onComplete }) => {
-	// Animation values
-	const beePosition = useRef(new Animated.ValueXY({ x: 0, y: height / 2 })).current; // Changed x to 0
-	const mainScreenPosition = useRef(new Animated.Value(height)).current;
+const CustomSplashScreen = ({ onComplete }) => {
+	const sheetPosition = useRef(new Animated.Value(0)).current;
+	const beePosition = useRef(new Animated.ValueXY({ x: 0, y: height / 2 })).current;
 	const beeScale = useRef(new Animated.Value(1)).current;
 	const beeRotation = useRef(new Animated.Value(0)).current;
 	const beeOpacity = useRef(new Animated.Value(1)).current;
 
-	// Convert rotation to degrees
 	const spin = beeRotation.interpolate({
 		inputRange: [0, 1],
 		outputRange: ['0deg', '360deg']
 	});
 
 	useEffect(() => {
-		// Move bee down slightly first
 		const moveDown = Animated.timing(beePosition.y, {
 			toValue: height * 0.6,
 			duration: 500,
 			useNativeDriver: true,
 		});
 
-		// Bee pulls screen up animation sequence
 		const pullUpSequence = Animated.parallel([
-			// Bee zooms up
 			Animated.timing(beePosition.y, {
 				toValue: -100,
 				duration: 1200,
 				useNativeDriver: true,
 			}),
-			// Main screen follows the bee
-			Animated.timing(mainScreenPosition, {
-				toValue: 0,
+			Animated.timing(sheetPosition, {
+				toValue: -height,
 				duration: 900,
 				useNativeDriver: true,
 			}),
-			// Bee gets smaller as it goes up
 			Animated.timing(beeScale, {
 				toValue: 0.5,
 				duration: 900,
 				useNativeDriver: true,
 			}),
-			// Bee spins as it pulls
 			Animated.timing(beeRotation, {
 				toValue: 1,
 				duration: 900,
 				useNativeDriver: true,
 			}),
-			// Bee fades out near the end
 			Animated.sequence([
 				Animated.delay(600),
 				Animated.timing(beeOpacity, {
@@ -62,10 +53,9 @@ const CustomSplashScreen = ({ children, onComplete }) => {
 			]),
 		]);
 
-		// Run the complete animation sequence
 		Animated.sequence([
 			moveDown,
-			Animated.delay(100), // Pause before pulling
+			Animated.delay(100),
 			pullUpSequence,
 		]).start(() => {
 			onComplete?.();
@@ -73,26 +63,16 @@ const CustomSplashScreen = ({ children, onComplete }) => {
 	}, []);
 
 	return (
-		<View style={styles.container}>
-			{/* Main screen content */}
-			<Animated.View
-				style={[
-					styles.mainContent,
-					{
-						transform: [{ translateY: mainScreenPosition }],
-					}
-				]}
-			>
-				{children}
-			</Animated.View>
-
-			{/* Animated bee */}
+		<Animated.View
+			pointerEvents="none"
+			style={[styles.sheet, { transform: [{ translateY: sheetPosition }] }]}
+		>
 			<Animated.View
 				style={[
 					styles.beeContainer,
 					{
 						opacity: beeOpacity,
-						left: '50%', // Center horizontally
+						left: '50%',
 						transform: [
 							{ translateY: beePosition.y },
 							{ translateX: beePosition.x },
@@ -107,29 +87,22 @@ const CustomSplashScreen = ({ children, onComplete }) => {
 					style={styles.beeLogo}
 				/>
 			</Animated.View>
-		</View>
+		</Animated.View>
 	);
 };
 
 const styles = StyleSheet.create({
-	container: {
-		flex: 1,
+	sheet: {
+		...StyleSheet.absoluteFillObject,
 		backgroundColor: '#1a1a1a',
-	},
-	mainContent: {
-		position: 'absolute',
-		top: 0,
-		left: 0,
-		right: 0,
-		bottom: 0,
-		backgroundColor: '#ffffff',
+		zIndex: 1000,
 	},
 	beeContainer: {
 		position: 'absolute',
 		width: 80,
 		height: 80,
-		marginLeft: -40, // Half of the width to center
-		marginTop: -40,  // Half of the height to center
+		marginLeft: -40,
+		marginTop: -40,
 	},
 	beeLogo: {
 		height: height * 0.235,

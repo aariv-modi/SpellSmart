@@ -25,10 +25,15 @@ setAudioModeAsync({ playsInSilentMode: true, interruptionMode: 'mixWithOthers' }
 const LOAD_TIMEOUT_MS = 8000;
 const PLAY_BUFFER_MS = 5000;
 const OS_SPEECH_SAFETY_MS = 15000;
+// Grace window after a cancellation: expo-audio needs a moment to release the
+// prior player's hold on the audio session, otherwise the next createAudioPlayer
+// hangs without firing playback events.
+const POST_STOP_GRACE_MS = 150;
 
 let activePlayer = null;
 let activeAbort = null;
 let callToken = 0;
+let lastStopAt = 0;
 
 const playRemote = (uri) =>
   new Promise((resolve, reject) => {
@@ -110,6 +115,7 @@ export const stopSpeak = () => {
     activePlayer = null;
   }
   try { Speech.stop(); } catch {}
+  lastStopAt = Date.now();
 };
 
 export const speak = async (text) => {
@@ -118,6 +124,12 @@ export const speak = async (text) => {
   stopSpeak();
   const myToken = callToken;
   const stillMine = () => myToken === callToken;
+
+  const sinceStop = Date.now() - lastStopAt;
+  if (sinceStop < POST_STOP_GRACE_MS) {
+    await new Promise((r) => setTimeout(r, POST_STOP_GRACE_MS - sinceStop));
+    if (!stillMine()) return;
+  }
 
   if (audioBaseUrl && BAKED_WORDS.has(text)) {
     try {

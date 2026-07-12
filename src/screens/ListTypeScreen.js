@@ -211,9 +211,9 @@ const styles = StyleSheet.create({
     container: {
         height: height * 0.72,
         width: width,
-        backgroundColor: true ? '#1a1a1a' : colors.neutral.offWhite,
+        backgroundColor: '#1a1a1a',
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
     },
     firstCardRow: {
         flexDirection: 'row',

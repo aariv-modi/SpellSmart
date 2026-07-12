@@ -1,15 +1,18 @@
 import React, { useState, useEffect, useRef } from "react";
 import { View, TextInput, StyleSheet, Dimensions, FlatList, Pressable } from "react-native";
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { Ionicons } from '@expo/vector-icons';
 import { scaleFont } from "../utils/responsiveTextSize";
 import { getBookmarkedWords } from "../utils/HelperFunctions";
+import { endSession } from "../utils/userData";
 import { speak, stopSpeak } from "../utils/speak";
+import { feedbackCorrect, feedbackIncorrect } from "../utils/sfx";
 
 import ProgressBar from '../components/ProgressBar';
 import RecursiveText from "../components/RecursiveText";
 import InterText from '../components/InterText';
+import FeedbackOverlay from '../components/FeedbackOverlay';
+import DefinitionModal from '../components/DefinitionModal';
 
 const { width, height } = Dimensions.get('window');
 
@@ -17,20 +20,29 @@ const SoloScreen = ({ navigation, route }) => {
     const { list, listName } = route.params;
     const wordCounter = useRef(0);
     const words = useRef(list);
+    const startTime = useRef(Date.now());
     const [missedWords, setMissedWords] = useState([]);
     const [userSpelling, setUserSpelling] = useState("");
     const [bookmarked, setBookmarked] = useState(false);
     const [bookmarkedWords, setBookmarkedWords] = useState([]);
+    const feedbackTick = useRef(0);
+    const [feedback, setFeedback] = useState({ type: null, tick: 0 });
+    const [busy, setBusy] = useState(false);
+    const busyRef = useRef(false);
+    const [definitionVisible, setDefinitionVisible] = useState(false);
+
+    const showFeedback = (type) => setFeedback({ type, tick: ++feedbackTick.current });
+    const clearFeedback = () => setFeedback((prev) => ({ type: null, tick: prev.tick }));
 
     const getCurrentWord = () => words.current[wordCounter.current];
 
     const spellWord = async (word) => {
-        return speak(`<speak>${word.split('')}</speak>`, 'standard');
+        return speak(`<speak>${word.split('')}</speak>`);
     };
 
     const handleCorrectSpelling = async () => {
-        await speak('Correct!');
-        await speak('Your next word is:');
+        showFeedback('correct');
+        await feedbackCorrect();
 
         wordCounter.current += 1;
 
@@ -47,21 +59,30 @@ const SoloScreen = ({ navigation, route }) => {
     const handleIncorrectSpelling = async (currentWord) => {
         setMissedWords(prev => [...new Set([...prev, currentWord])]);
         setUserSpelling("");
-        
-        await speak('Sorry, that wasn\'t right.');
+        showFeedback('incorrect');
+        await feedbackIncorrect();
+
         await speak(`${currentWord} is spelled`);
         await spellWord(currentWord);
         await speak('Try again.');
     };
 
     const checkSpelling = async () => {
-        const currentWord = getCurrentWord();
-        const isCorrect = userSpelling.trim().toLowerCase() === currentWord.toLowerCase();
+        if (busyRef.current) return;
+        busyRef.current = true;
+        setBusy(true);
+        try {
+            const currentWord = getCurrentWord();
+            const isCorrect = userSpelling.trim().toLowerCase() === currentWord.toLowerCase();
 
-        if (isCorrect) {
-            await handleCorrectSpelling();
-        } else {
-            await handleIncorrectSpelling(currentWord);
+            if (isCorrect) {
+                await handleCorrectSpelling();
+            } else {
+                await handleIncorrectSpelling(currentWord);
+            }
+        } finally {
+            busyRef.current = false;
+            setBusy(false);
         }
     };
 
@@ -77,18 +98,28 @@ const SoloScreen = ({ navigation, route }) => {
     };
 
     const handleEnd = async () => {
-        const data = JSON.parse(await AsyncStorage.getItem('userData'));
-        await AsyncStorage.setItem('userData', JSON.stringify({
-            ...data,
-            bookmarkedWords
-        }));
-        
+        const wordsAttempted = wordCounter.current;
+        const wordsCorrect = Math.max(0, wordsAttempted - missedWords.length);
+
+        await endSession({
+            bookmarkedWords,
+            missedFromSession: missedWords,
+            wordsAttempted,
+            wordsCorrect,
+            listName,
+            mode: 'Solo',
+            durationMs: Date.now() - startTime.current,
+        });
+
         navigation.reset({
-            index: 0,
-            routes: [{
-                name: 'PracticeTab',
-                state: { routes: [{ name: 'ListType' }] }
-            }]
+            index: 1,
+            routes: [
+                { name: 'HomeMain' },
+                {
+                    name: 'EndSession',
+                    params: { wordsAttempted, wordsCorrect, missedFromSession: missedWords, listName, mode: 'Solo' },
+                },
+            ],
         });
     };
 
@@ -114,6 +145,7 @@ const SoloScreen = ({ navigation, route }) => {
 
     return (
         <View style={styles.container}>
+            <FeedbackOverlay type={feedback.type} tick={feedback.tick} onDone={clearFeedback} />
             <View style={styles.progressContainer}>
                 <ProgressBar progress={wordCounter.current / list.length} />
                 <RecursiveText
@@ -122,7 +154,7 @@ const SoloScreen = ({ navigation, route }) => {
                 />
             </View>
 
-            <View style={styles.textInputContainer}>
+            <View style={[styles.textInputContainer, busy && styles.textInputContainerBusy]}>
                 <TextInput
                     autoComplete="off"
                     autoCapitalize='none'
@@ -133,6 +165,7 @@ const SoloScreen = ({ navigation, route }) => {
                     value={userSpelling}
                     returnKeyType="done"
                     onSubmitEditing={checkSpelling}
+                    editable={!busy}
                     style={styles.textInputField}
                 />
                 <View style={styles.iconContainer}>
@@ -144,6 +177,13 @@ const SoloScreen = ({ navigation, route }) => {
                         onPress={() => speak(getCurrentWord())}
                     />
                     <Ionicons
+                        name="book-outline"
+                        size={height * 0.033}
+                        color="white"
+                        style={styles.volumeIcon}
+                        onPress={() => setDefinitionVisible(true)}
+                    />
+                    <Ionicons
                         name={bookmarked ? "star" : "star-outline"}
                         size={height * 0.033}
                         color="#ffc800"
@@ -151,6 +191,12 @@ const SoloScreen = ({ navigation, route }) => {
                     />
                 </View>
             </View>
+
+            <DefinitionModal
+                word={getCurrentWord()}
+                visible={definitionVisible}
+                onClose={() => setDefinitionVisible(false)}
+            />
 
             <View style={styles.missedWordsContainer}>
                 <RecursiveText text="MISSED WORDS" style={styles.title} />
@@ -197,6 +243,9 @@ const styles = StyleSheet.create({
         width: height * 0.415,
         borderRadius: 10,
         justifyContent: 'center'
+    },
+    textInputContainerBusy: {
+        opacity: 0.5
     },
     textInputField: {
         fontSize: scaleFont(16),

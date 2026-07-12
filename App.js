@@ -7,6 +7,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { loadFontsAndAssets } from './src/utils/appInitialization';
 import { defaultUserData } from './src/utils/defaultUserData';
 import { checkNewUser } from './src/utils/HelperFunctions';
+import { loadUserData, saveUserData, markLoginToday } from './src/utils/userData';
+import { scheduleDailyReminder, parseReminderTime } from './src/utils/notifications';
+import { getEffectiveStreak, todayString } from './src/utils/streakLogic.mjs';
 import CustomSplashScreen from './src/screens/CustomSplashScreen';
 
 // Intro Screens
@@ -58,11 +61,17 @@ export default function App() {
 				setNewUser(isNewUser);
 
 				if (!isNewUser) {
-					const userData = await AsyncStorage.getItem('userData');
-					const parsedData = JSON.parse(userData);
-					parsedData.numSessions++;
+					const userData = await loadUserData();
+					userData.numSessions++;
+					await saveUserData(userData);
+					await markLoginToday();
 
-					await AsyncStorage.setItem('userData', JSON.stringify(parsedData));
+					if (userData.settings.reminderEnabled) {
+						const fresh = await loadUserData();
+						const streakDays = getEffectiveStreak(fresh.streak, todayString());
+						const { hour, minute } = parseReminderTime(fresh.settings.reminderTime);
+						await scheduleDailyReminder(streakDays, hour, minute).catch(() => {});
+					}
 				}
 
 				await loadFontsAndAssets();
@@ -78,7 +87,7 @@ export default function App() {
 	}, []);
 
 	const handleIntroComplete = useCallback(async () => {
-		await AsyncStorage.setItem('userData', JSON.stringify(defaultUserData));
+		await saveUserData(defaultUserData);
 		setNewUser(false);
 	}, []);
 
@@ -91,14 +100,13 @@ export default function App() {
 	}
 
 	return (
-		<NavigationContainer>
-			{showCustomSplash ? (
-				<CustomSplashScreen onComplete={handleCustomSplashComplete}>
-					<MainNavigator newUser={newUser} onIntroComplete={handleIntroComplete} />
-				</CustomSplashScreen>
-			) : (
+		<>
+			<NavigationContainer>
 				<MainNavigator newUser={newUser} onIntroComplete={handleIntroComplete} />
+			</NavigationContainer>
+			{showCustomSplash && (
+				<CustomSplashScreen onComplete={handleCustomSplashComplete} />
 			)}
-		</NavigationContainer>
+		</>
 	);
 }

@@ -1,9 +1,18 @@
 const TTS_ENDPOINT = 'https://texttospeech.googleapis.com/v1/text:synthesize';
 const OAUTH_ENDPOINT = 'https://oauth2.googleapis.com/token';
 const TOKEN_CACHE_KEY = 'https://internal/gcp-access-token';
+const DICT_ENDPOINT = 'https://api.dictionaryapi.dev/api/v2/entries/en';
 const MAX_TEXT_LENGTH = 200;
+const MAX_WORD_LENGTH = 60;
 const VOICE_NAME = 'en-US-Neural2-D';
 const LANGUAGE_CODE = 'en-US';
+// Bump when SSML handling or any other transformation changes — invalidates the edge cache.
+const CACHE_VERSION = 'v2';
+
+const isSSML = (text) => {
+  const t = text.trim();
+  return t.startsWith('<speak') && t.endsWith('</speak>');
+};
 
 export default {
   async fetch(request, env, ctx) {
@@ -12,55 +21,123 @@ export default {
     }
 
     const url = new URL(request.url);
-    const text = url.searchParams.get('text');
-    if (!text) return new Response('Missing ?text', { status: 400 });
-    if (text.length > MAX_TEXT_LENGTH) {
-      return new Response('Text too long', { status: 400 });
+    if (url.pathname === '/define') {
+      return handleDefine(url, ctx);
     }
-
-    const cache = caches.default;
-    const cacheKey = new Request(
-      `https://tts-cache/${encodeURIComponent(VOICE_NAME)}/${encodeURIComponent(text)}`,
-      { method: 'GET' },
-    );
-    const cached = await cache.match(cacheKey);
-    if (cached) return cached;
-
-    const accessToken = await getAccessToken(env, ctx);
-    if (!accessToken) return new Response('Auth failed', { status: 502 });
-
-    const ttsRes = await fetch(TTS_ENDPOINT, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        input: { text },
-        voice: { languageCode: LANGUAGE_CODE, name: VOICE_NAME },
-        audioConfig: { audioEncoding: 'MP3' },
-      }),
-    });
-
-    if (!ttsRes.ok) {
-      const detail = await ttsRes.text();
-      return new Response(`TTS upstream error: ${detail}`, { status: 502 });
-    }
-
-    const data = await ttsRes.json();
-    const audioBytes = base64ToBytes(data.audioContent);
-
-    const response = new Response(audioBytes, {
-      headers: {
-        'Content-Type': 'audio/mpeg',
-        'Cache-Control': 'public, max-age=2592000, immutable',
-      },
-    });
-
-    ctx.waitUntil(cache.put(cacheKey, response.clone()));
-    return response;
+    return handleTTS(url, env, ctx);
   },
 };
+
+async function handleTTS(url, env, ctx) {
+  const text = url.searchParams.get('text');
+  if (!text) return new Response('Missing ?text', { status: 400 });
+  if (text.length > MAX_TEXT_LENGTH) {
+    return new Response('Text too long', { status: 400 });
+  }
+
+  const cache = caches.default;
+  const cacheKey = new Request(
+    `https://tts-cache/${CACHE_VERSION}/${encodeURIComponent(VOICE_NAME)}/${encodeURIComponent(text)}`,
+    { method: 'GET' },
+  );
+  const cached = await cache.match(cacheKey);
+  if (cached) return cached;
+
+  const accessToken = await getAccessToken(env, ctx);
+  if (!accessToken) return new Response('Auth failed', { status: 502 });
+
+  const input = isSSML(text) ? { ssml: text } : { text };
+  const ttsRes = await fetch(TTS_ENDPOINT, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      input,
+      voice: { languageCode: LANGUAGE_CODE, name: VOICE_NAME },
+      audioConfig: { audioEncoding: 'MP3' },
+    }),
+  });
+
+  if (!ttsRes.ok) {
+    const detail = await ttsRes.text();
+    return new Response(`TTS upstream error: ${detail}`, { status: 502 });
+  }
+
+  const data = await ttsRes.json();
+  const audioBytes = base64ToBytes(data.audioContent);
+
+  const response = new Response(audioBytes, {
+    headers: {
+      'Content-Type': 'audio/mpeg',
+      'Cache-Control': 'public, max-age=2592000, immutable',
+    },
+  });
+
+  ctx.waitUntil(cache.put(cacheKey, response.clone()));
+  return response;
+}
+
+async function handleDefine(url, ctx) {
+  const word = (url.searchParams.get('word') || '').trim().toLowerCase();
+  if (!word) return jsonResponse({ error: 'Missing ?word' }, 400);
+  if (word.length > MAX_WORD_LENGTH) return jsonResponse({ error: 'Word too long' }, 400);
+
+  const cache = caches.default;
+  const cacheKey = new Request(
+    `https://def-cache/${CACHE_VERSION}/${encodeURIComponent(word)}`,
+    { method: 'GET' },
+  );
+  const cached = await cache.match(cacheKey);
+  if (cached) return cached;
+
+  let dictRes;
+  try {
+    dictRes = await fetch(`${DICT_ENDPOINT}/${encodeURIComponent(word)}`);
+  } catch {
+    return jsonResponse({ word, definitions: [] }, 502);
+  }
+
+  let payload;
+  if (dictRes.status === 404) {
+    payload = { word, definitions: [] };
+  } else if (!dictRes.ok) {
+    return jsonResponse({ word, definitions: [] }, 502);
+  } else {
+    const data = await dictRes.json();
+    payload = { word, definitions: extractDefinitions(data) };
+  }
+
+  const response = jsonResponse(payload, 200, 'public, max-age=2592000, immutable');
+  ctx.waitUntil(cache.put(cacheKey, response.clone()));
+  return response;
+}
+
+function extractDefinitions(data) {
+  const out = [];
+  for (const entry of data) {
+    for (const meaning of entry.meanings ?? []) {
+      for (const def of meaning.definitions ?? []) {
+        if (def.definition) {
+          out.push({ partOfSpeech: meaning.partOfSpeech, definition: def.definition });
+          if (out.length >= 3) return out;
+        }
+      }
+    }
+  }
+  return out;
+}
+
+function jsonResponse(body, status = 200, cacheControl = 'no-store') {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: {
+      'Content-Type': 'application/json',
+      'Cache-Control': cacheControl,
+    },
+  });
+}
 
 async function getAccessToken(env, ctx) {
   const cache = caches.default;

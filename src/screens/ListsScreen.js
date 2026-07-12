@@ -1,67 +1,66 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { View, StyleSheet, Dimensions, ScrollView, TouchableOpacity, Modal, TextInput, Alert, TouchableWithoutFeedback } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, StyleSheet, Dimensions, ScrollView, TouchableOpacity, Modal, TextInput, Alert, TouchableWithoutFeedback, Pressable } from 'react-native';
 import { getCustomListNames, getCustomListLengths, addList } from '../utils/HelperFunctions';
-import RecursiveText from "../components/RecursiveText"
-import { Ionicons } from '@expo/vector-icons'
-import ListCard from '../components/ListCard'
-import { scaleFont } from '../utils/responsiveTextSize';
+import RecursiveText from '../components/RecursiveText';
+import InterText from '../components/InterText';
+import { Ionicons } from '@expo/vector-icons';
+import ListCard from '../components/ListCard';
+import Card from '../components/ui/Card';
+import { color, radii, space, text } from '../theme';
+
 const { width, height } = Dimensions.get('window');
+const CONTENT_WIDTH = height * 0.46;
+
+const PICKER_OPTIONS = [
+    { key: 'type', icon: 'create-outline', label: 'Type words' },
+    { key: 'image', icon: 'image-outline', label: 'From image' },
+    { key: 'paste', icon: 'clipboard-outline', label: 'Paste from text' },
+];
 
 const ListsScreen = ({ navigation }) => {
     const [listNames, setListNames] = useState([]);
     const [listLengths, setListLengths] = useState([]);
-    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [isPickerVisible, setIsPickerVisible] = useState(false);
+    const [isNameModalVisible, setIsNameModalVisible] = useState(false);
     const [newListName, setNewListName] = useState('');
 
     useEffect(() => {
         const fetchData = async () => {
-            const listNames = await getCustomListNames();
-            setListNames(listNames);
-            const listLengths = await getCustomListLengths();
-            setListLengths(listLengths)
+            const names = await getCustomListNames();
+            setListNames(names);
+            const lengths = await getCustomListLengths();
+            setListLengths(lengths);
         };
         fetchData();
     }, [listNames]);
 
-    const handleAddButtonPress = () => {
-        setIsModalVisible(true);
+    const handlePick = (key) => {
+        setIsPickerVisible(false);
+        if (key === 'type') setIsNameModalVisible(true);
+        else if (key === 'image') navigation.navigate('UploadList');
+        else if (key === 'paste') navigation.navigate('PasteList');
     };
 
     const handleCreateList = async () => {
-        const trimmedListName = newListName.trim();
-
-        if (!trimmedListName) {
+        const trimmed = newListName.trim();
+        if (!trimmed) {
             Alert.alert('Please enter a name for your list.');
             return;
         }
-
-        if (listNames.includes(trimmedListName)) {
+        if (listNames.includes(trimmed)) {
             Alert.alert('A list with this name already exists.');
             return;
         }
 
-        await addList(trimmedListName);
-        setListNames([...listNames, trimmedListName]);
+        await addList(trimmed);
+        setListNames([...listNames, trimmed]);
         setNewListName('');
-        setIsModalVisible(false);
+        setIsNameModalVisible(false);
     };
 
     const handleCancelList = () => {
         setNewListName('');
-        setIsModalVisible(false);
-    };
-
-    const renderListItems = () => {
-        return listNames.map((item, index) => (
-            <ListCard
-                key={item}
-                onTouch={() => navigation.navigate('ListDetails', { listName: item })}
-                title={item}
-                length={listLengths[index]}
-                style={{ marginTop: height * 0.015 }}
-                updateListNames={setListNames}
-            />
-        ));
+        setIsNameModalVisible(false);
     };
 
     return (
@@ -70,60 +69,91 @@ const ListsScreen = ({ navigation }) => {
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={styles.scrollContent}
             >
-                <View style={styles.infoCard}>
-                    <RecursiveText
-                        text="Your Lists"
-                        style={styles.infoTitle}
-                    />
-                    <RecursiveText
-                        text="Here's where you can view and manage your custom spelling lists! Click on a list to view and edit its contents, or click the + button to create a new one."
-                        style={styles.infoText}
-                    />
-                </View>
-                <View style={styles.missedWordsDivider} />
-                <View style={styles.listsContainer}>
-                    {renderListItems()}
-                </View>
-                {/* Add some padding at the bottom for better scrolling */}
+                {listNames.length === 0 ? (
+                    <View style={styles.emptyState}>
+                        <InterText
+                            text="No custom lists yet — tap + to make one"
+                            style={styles.emptyStateText}
+                        />
+                    </View>
+                ) : (
+                    <View style={styles.listsContainer}>
+                        {listNames.map((item, index) => (
+                            <ListCard
+                                key={item}
+                                onTouch={() => navigation.navigate('ListDetails', { listName: item })}
+                                title={item}
+                                length={listLengths[index]}
+                                style={{ marginTop: space.md }}
+                                updateListNames={setListNames}
+                            />
+                        ))}
+                    </View>
+                )}
+
                 <View style={{ height: height * 0.1 }} />
             </ScrollView>
 
-            <TouchableOpacity style={styles.fab} onPress={handleAddButtonPress}>
-                <Ionicons name="add" size={height * 0.035} color="white" />
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.fabSecondary} onPress={() => navigation.navigate('UploadList')}>
-                <Ionicons name="image" size={height * 0.03} color="white" />
+            <TouchableOpacity style={styles.fab} onPress={() => setIsPickerVisible(true)}>
+                <Ionicons name="add" size={height * 0.035} color={color.text} />
             </TouchableOpacity>
 
             <Modal
+                animationType="fade"
+                transparent
+                visible={isPickerVisible}
+                onRequestClose={() => setIsPickerVisible(false)}
+            >
+                <TouchableWithoutFeedback onPress={() => setIsPickerVisible(false)}>
+                    <View style={styles.modalBackdrop}>
+                        <TouchableWithoutFeedback>
+                            <Card padding="md" style={styles.pickerCard}>
+                                <RecursiveText text="Add a list" style={styles.pickerTitle} />
+                                {PICKER_OPTIONS.map((opt) => (
+                                    <Pressable
+                                        key={opt.key}
+                                        onPress={() => handlePick(opt.key)}
+                                        style={({ pressed }) => [
+                                            styles.pickerRow,
+                                            pressed && styles.pickerRowPressed,
+                                        ]}
+                                    >
+                                        <Ionicons name={opt.icon} size={22} color={color.text} />
+                                        <InterText text={opt.label} style={styles.pickerRowText} />
+                                    </Pressable>
+                                ))}
+                            </Card>
+                        </TouchableWithoutFeedback>
+                    </View>
+                </TouchableWithoutFeedback>
+            </Modal>
+
+            <Modal
                 animationType="slide"
-                transparent={true}
-                visible={isModalVisible}
+                transparent
+                visible={isNameModalVisible}
                 onRequestClose={handleCancelList}
             >
                 <TouchableWithoutFeedback onPress={handleCancelList}>
-                    <View style={styles.modalContainer}>
+                    <View style={styles.modalBackdrop}>
                         <TouchableWithoutFeedback>
-
-                            <View style={styles.modalContent}>
-                                <RecursiveText text="Create New List" style={styles.modalTitle} />
-
+                            <Card padding="lg" style={styles.namePromptCard}>
+                                <RecursiveText text="Create New List" style={styles.namePromptTitle} />
                                 <TextInput
                                     style={styles.input}
                                     value={newListName}
                                     onChangeText={setNewListName}
-                                    placeholderTextColor="white"
+                                    placeholderTextColor={color.textSubtle}
                                     placeholder="Enter list name"
                                     textAlign="center"
                                     autoComplete="off"
-                                    autoFocus={true}
-                                    autoCapitalize='none'
+                                    autoFocus
+                                    autoCapitalize="none"
                                     autoCorrect={false}
                                     returnKeyType="done"
                                     onSubmitEditing={handleCreateList}
                                 />
-                            </View>
+                            </Card>
                         </TouchableWithoutFeedback>
                     </View>
                 </TouchableWithoutFeedback>
@@ -135,97 +165,90 @@ const ListsScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#1a1a1a",
+        backgroundColor: color.bg,
     },
     scrollContent: {
         alignItems: 'center',
+        paddingTop: space.xl,
     },
     listsContainer: {
-        width: height * 0.46,
+        width: CONTENT_WIDTH,
         alignItems: 'center',
-        marginTop: height * 0.02,
+    },
+    emptyState: {
+        width: CONTENT_WIDTH,
+        paddingVertical: space.xxxl,
+        alignItems: 'center',
+    },
+    emptyStateText: {
+        fontSize: text.body,
+        color: color.textMuted,
     },
     fab: {
         position: 'absolute',
         width: height * 0.07,
         height: height * 0.07,
-        borderRadius: 100,
-        backgroundColor: '#ce82ff',
+        borderRadius: radii.pill,
+        backgroundColor: color.brandAlt,
         right: height * 0.03,
-        bottom: height * 0.03, // Changed from top to bottom
+        bottom: height * 0.03,
         justifyContent: 'center',
         alignItems: 'center',
         elevation: 5,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.25,
-        shadowRadius: 3.84,
+        shadowRadius: 4,
     },
-    fabSecondary: {
-        position: 'absolute',
-        width: height * 0.06,
-        height: height * 0.06,
-        borderRadius: 100,
-        backgroundColor: '#9145bf',
-        right: height * 0.12,
-        bottom: height * 0.035,
-        justifyContent: 'center',
-        alignItems: 'center',
-        elevation: 5,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
-    },
-    modalContainer: {
+    modalBackdrop: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'rgba(0,0,0,0.5)'
+        backgroundColor: color.overlay,
+        paddingHorizontal: space.xl,
     },
-    modalContent: {
-        width: height * 0.37,
-        height: height * 0.16,
-        backgroundColor: '#333333',
-        borderRadius: 20,
-        alignItems: 'center'
+    pickerCard: {
+        width: '100%',
+        maxWidth: 400,
     },
-    modalTitle: {
-        fontSize: scaleFont(20),
-        marginTop: height * 0.025,
+    pickerTitle: {
+        fontSize: text.title,
+        alignSelf: 'center',
+        marginBottom: space.md,
+    },
+    pickerRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: color.surface,
+        paddingVertical: space.md,
+        paddingHorizontal: space.lg,
+        borderRadius: radii.md,
+        marginTop: space.sm,
+    },
+    pickerRowPressed: {
+        opacity: 0.75,
+    },
+    pickerRowText: {
+        fontSize: text.body,
+        marginLeft: space.md,
+    },
+    namePromptCard: {
+        width: '100%',
+        maxWidth: 360,
+        alignItems: 'center',
+    },
+    namePromptTitle: {
+        fontSize: text.title,
+        marginBottom: space.lg,
     },
     input: {
-        width: height * 0.32,
-        height: height * 0.05,
-        backgroundColor: '#505050',
-        color: 'white',
-        borderRadius: 10,
-        marginTop: height * 0.025,
-        fontSize: scaleFont(16)
-    },
-    infoCard: {
-        backgroundColor: '#333333',
-        width: height * 0.415,
-        borderRadius: 15,
-        padding: height * 0.023,
-        marginTop: height * 0.03
-    },
-    infoTitle: {
-        fontSize: scaleFont(20),
-        marginBottom: height * 0.01,
-        color: '#ffc107'
-    },
-    infoText: {
-        fontSize: scaleFont(16),
-        lineHeight: scaleFont(24)
-    },
-    missedWordsDivider: {
-        height: height * 0.004,
-        width: height * 0.4,
-        backgroundColor: 'white',
-        alignSelf: 'center',
-        borderRadius: 30,
-        marginTop: height * 0.02
+        width: '100%',
+        height: 48,
+        backgroundColor: color.divider,
+        color: color.text,
+        borderRadius: radii.md,
+        fontSize: text.body,
+        fontFamily: 'Inter-SemiBold',
     },
 });
 

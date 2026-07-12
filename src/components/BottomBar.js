@@ -2,40 +2,34 @@ import React from "react";
 import { Dimensions, TouchableOpacity, SafeAreaView, Image, View } from "react-native"
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
-import PracticeNavigation from "./navigation/PracticeNavigation";
+import HomeNavigation from "./navigation/HomeNavigation";
 import ListsNavigation from "./navigation/ListsNavigation";
-import BookmarksNavigation from "./navigation/BookmarksNavigation";
-import HelpNavigation from "./navigation/HelpNavigation";
+import SettingsNavigation from "./navigation/SettingsNavigation";
 
 const Tab = createBottomTabNavigator();
 const { width, height } = Dimensions.get('window');
-const practice = require('../../assets/images/target.png')
+const home = require('../../assets/images/target.png')
 const lists = require('../../assets/images/clipboard.png')
-const bookmarks = require('../../assets/images/star.png')
-const help = require('../../assets/images/erm.png')
+const settings = require('../../assets/images/erm.png')
 
 const TAB_ICONS = {
-    PracticeTab: {
-        source: practice,
+    HomeTab: {
+        source: home,
         aspectRatio: 462 / 476
     },
     ListsTab: {
         source: lists,
         aspectRatio: 361 / 463
     },
-    BookmarksTab: {
-        source: bookmarks,
-        aspectRatio: 454 / 457
-    },
-    HelpTab: {
-        source: help,
+    SettingsTab: {
+        source: settings,
         aspectRatio: 376 / 462
     }
 };
 
 const BottomBar = ({ state, navigation }) => {
     const currentScreen = state?.routes[state.index]?.state?.routes.slice(-1)[0]?.name;
-    const hideOnScreens = ['Solo', 'Buddy', 'MissedWords'];
+    const hideOnScreens = ['Solo', 'Buddy', 'MissedWords', 'EndSession'];
 
     if (hideOnScreens.includes(currentScreen)) {
         return null;
@@ -119,20 +113,16 @@ const BottomNavigation = () => {
             })}
         >
             <Tab.Screen
-                name="PracticeTab"
-                component={PracticeNavigation}
+                name="HomeTab"
+                component={HomeNavigation}
             />
             <Tab.Screen
                 name="ListsTab"
                 component={ListsNavigation}
             />
             <Tab.Screen
-                name="BookmarksTab"
-                component={BookmarksNavigation}
-            />
-            <Tab.Screen
-                name="HelpTab"
-                component={HelpNavigation}
+                name="SettingsTab"
+                component={SettingsNavigation}
             />
         </Tab.Navigator>
     );

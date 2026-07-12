@@ -107,6 +107,22 @@ export const addList = async (listName) => {
     }
 };
 
+export const uniqueListName = async (desiredName) => {
+    const data = JSON.parse(await AsyncStorage.getItem('userData'));
+    const existing = new Set(data.spellingLists.map(l => l.name));
+    if (!existing.has(desiredName)) return desiredName;
+    let i = 2;
+    while (existing.has(`${desiredName} (${i})`)) i++;
+    return `${desiredName} (${i})`;
+};
+
+export const addListWithWords = async (listName, words) => {
+    const data = JSON.parse(await AsyncStorage.getItem('userData'));
+    const dedupedWords = [...new Set(words.map(w => w.trim()).filter(Boolean))];
+    data.spellingLists.push({ name: listName, words: dedupedWords });
+    await AsyncStorage.setItem('userData', JSON.stringify(data));
+};
+
 export const checkNewUser = async () => {
     const keys = await AsyncStorage.getAllKeys()
     if (keys.length == 0) {
