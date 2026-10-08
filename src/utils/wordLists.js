@@ -1,6 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Constants from 'expo-constants';
 
+import { registerBakedWords } from './speak';
+
 import bundled3rd4th from '../../data/lists/thirdFourth.json';
 import bundled5th6th from '../../data/lists/fifthSixth.json';
 import bundled7th8th from '../../data/lists/seventhEighth.json';
@@ -27,7 +29,10 @@ const inFlight = new Map();
 export async function getWordList(gradeLevel) {
   if (!BUNDLED[gradeLevel]) throw new Error(`Unknown list: ${gradeLevel}`);
   if (!inFlight.has(gradeLevel)) {
-    inFlight.set(gradeLevel, resolve(gradeLevel));
+    inFlight.set(gradeLevel, resolve(gradeLevel).then((words) => {
+      registerBakedWords(words);
+      return words;
+    }));
   }
   return inFlight.get(gradeLevel);
 }

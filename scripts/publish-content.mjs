@@ -91,8 +91,9 @@ const publishAudio = async () => {
 };
 
 const main = async () => {
-  await publishLists();
+  // Audio first, so a freshly published list never points at missing audio.
   await publishAudio();
+  await publishLists();
   console.log('Done.');
 };
 

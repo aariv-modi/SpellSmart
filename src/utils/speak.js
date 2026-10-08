@@ -5,12 +5,18 @@ import Constants from 'expo-constants';
 import bundled3rd4th from '../../data/lists/thirdFourth.json';
 import bundled5th6th from '../../data/lists/fifthSixth.json';
 import bundled7th8th from '../../data/lists/seventhEighth.json';
+import { primarySpelling } from './wordVariants';
 
-const BAKED_WORDS = new Set([
-  ...bundled3rd4th,
-  ...bundled5th6th,
-  ...bundled7th8th,
-]);
+// Words with pre-baked audio in R2, keyed by primary spelling. Seeded from the
+// bundled lists; lists fetched from R2 register theirs so new words added
+// without an app update still use baked audio instead of the TTS proxy.
+const BAKED_WORDS = new Set(
+  [...bundled3rd4th, ...bundled5th6th, ...bundled7th8th].map(primarySpelling)
+);
+
+export const registerBakedWords = (entries) => {
+  for (const entry of entries) BAKED_WORDS.add(primarySpelling(entry));
+};
 
 const asUrl = (v) => (typeof v === 'string' && v.length > 0 ? v : null);
 const audioBaseUrl = asUrl(Constants.expoConfig?.extra?.audioBaseUrl);
@@ -153,3 +159,5 @@ export const speak = async (text) => {
 
   await speakViaOS(text);
 };
+
+export const speakWord = (entry) => speak(primarySpelling(entry));

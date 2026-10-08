@@ -5,7 +5,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { scaleFont } from "../utils/responsiveTextSize";
 import { getBookmarkedWords } from "../utils/HelperFunctions";
 import { endSession } from "../utils/userData";
-import { speak, stopSpeak } from "../utils/speak";
+import { speak, speakWord, stopSpeak } from "../utils/speak";
+import { isCorrectSpelling, primarySpelling } from "../utils/wordVariants";
 import { feedbackCorrect, feedbackIncorrect } from "../utils/sfx";
 
 import ProgressBar from '../components/ProgressBar';
@@ -53,7 +54,7 @@ const SoloScreen = ({ navigation, route }) => {
         const nextWord = getCurrentWord();
         setBookmarked(bookmarkedWords.includes(nextWord));
         setUserSpelling("");
-        await speak(nextWord);
+        await speakWord(nextWord);
     };
 
     const handleIncorrectSpelling = async (currentWord) => {
@@ -62,8 +63,8 @@ const SoloScreen = ({ navigation, route }) => {
         showFeedback('incorrect');
         await feedbackIncorrect();
 
-        await speak(`${currentWord} is spelled`);
-        await spellWord(currentWord);
+        await speak(`${primarySpelling(currentWord)} is spelled`);
+        await spellWord(primarySpelling(currentWord));
         await speak('Try again.');
     };
 
@@ -73,7 +74,7 @@ const SoloScreen = ({ navigation, route }) => {
         setBusy(true);
         try {
             const currentWord = getCurrentWord();
-            const isCorrect = userSpelling.trim().toLowerCase() === currentWord.toLowerCase();
+            const isCorrect = isCorrectSpelling(userSpelling, currentWord);
 
             if (isCorrect) {
                 await handleCorrectSpelling();
@@ -132,7 +133,7 @@ const SoloScreen = ({ navigation, route }) => {
             setBookmarked(bookedWords.includes(currentWord));
 
             await speak('Your first word is:');
-            await speak(currentWord);
+            await speakWord(currentWord);
         };
 
         initializeScreen();
@@ -174,7 +175,7 @@ const SoloScreen = ({ navigation, route }) => {
                         size={height * 0.033}
                         color="white"
                         style={styles.volumeIcon}
-                        onPress={() => speak(getCurrentWord())}
+                        onPress={() => speakWord(getCurrentWord())}
                     />
                     <Ionicons
                         name="book-outline"

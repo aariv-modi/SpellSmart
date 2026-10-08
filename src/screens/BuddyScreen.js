@@ -5,7 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { scaleFont } from "../utils/responsiveTextSize";
 import { getBookmarkedWords } from "../utils/HelperFunctions";
 import { endSession } from "../utils/userData";
-import { speak, stopSpeak } from "../utils/speak";
+import { speakWord, stopSpeak } from "../utils/speak";
 import { feedbackCorrect, feedbackIncorrect } from "../utils/sfx";
 
 import ProgressBar from '../components/ProgressBar';
@@ -105,7 +105,7 @@ const BuddyScreen = ({ navigation, route }) => {
 
             const newCounter = currentCounter + 1;
             setWordCounter(newCounter);
-            await speak(words.current[newCounter]);
+            await speakWord(words.current[newCounter]);
         } catch {
             // Swallow audio errors; never strand the UI in busy state.
         } finally {
@@ -119,7 +119,7 @@ const BuddyScreen = ({ navigation, route }) => {
                 const bookedWords = await getBookmarkedWords();
                 setBookmarkedWords(bookedWords);
                 setBookmarked(bookedWords.includes(getCurrentWord()));
-                runAudio(speak(getCurrentWord()));
+                runAudio(speakWord(getCurrentWord()));
             } catch (error) {
                 console.error("Initialization error:", error);
             }
@@ -196,7 +196,7 @@ const BuddyScreen = ({ navigation, route }) => {
                     color="#ffc800"
                     onTouch={() => {
                         if (busy.current) return;
-                        runAudio(speak(getCurrentWord()));
+                        runAudio(speakWord(getCurrentWord()));
                     }}
                 />
                 <BuddyCard

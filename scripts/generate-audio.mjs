@@ -16,7 +16,12 @@ const collectUniqueWords = () => {
   for (const file of readdirSync(LISTS_DIR)) {
     if (!file.endsWith('.json')) continue;
     const list = JSON.parse(readFileSync(resolve(LISTS_DIR, file), 'utf8'));
-    for (const word of list) words.add(word);
+    // Entries like "vapor, vapour" list alternate spellings; the app speaks
+    // only the first. Keep the full-entry audio too for older app builds.
+    for (const word of list) {
+      words.add(word);
+      words.add(word.split(',')[0].trim());
+    }
   }
   return [...words].sort();
 };
