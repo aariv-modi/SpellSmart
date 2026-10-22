@@ -55,7 +55,7 @@
     ],
     "ios": {
       "bundleIdentifier": "com.awesomeaariv.SpellSmart",
-      "buildNumber": "23",
+      "buildNumber": "24",
       "supportsTablet": false,
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
@@ -67,7 +67,7 @@
         "backgroundColor": "#FFFFFF"
       },
       "package": "com.SpellSmart",
-      "versionCode": 23,
+      "versionCode": 24,
       "permissions": [
         "android.permission.RECORD_AUDIO"
       ]
