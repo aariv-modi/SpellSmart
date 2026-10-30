@@ -7,7 +7,8 @@
     "web": "expo start --web",
     "eject": "expo eject",
     "generate-audio": "node scripts/generate-audio.mjs",
-    "publish-content": "node scripts/publish-content.mjs"
+    "publish-content": "node scripts/publish-content.mjs",
+    "deploy-web": "expo export --platform web --clear && cd worker && npx wrangler pages deploy ../dist --project-name spellsmart --branch main"
   },
   "dependencies": {
     "@expo/metro-runtime": "~6.1.2",
