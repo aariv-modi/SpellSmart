@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { View, StyleSheet, Dimensions, Image, Pressable } from 'react-native';
+import { View, StyleSheet, Dimensions, Image, Pressable, Platform } from 'react-native';
 import Swiper from 'react-native-swiper';
 import RecursiveText from '../components/RecursiveText';
 import InterText from '../components/InterText';
@@ -84,6 +84,8 @@ const IntroScreens = ({ onIntroComplete }) => {
     const handleNext = () => {
         if (currentIndex === introPages.length - 1) {
             handleComplete();
+        } else if (Platform.OS === 'web') {
+            setCurrentIndex(currentIndex + 1);
         } else {
             swiperRef.current.scrollBy(1);
         }
@@ -91,6 +93,24 @@ const IntroScreens = ({ onIntroComplete }) => {
 
     return (
         <View style={styles.container}>
+            {/* react-native-swiper doesn't work in browsers, so web shows one page at a time */}
+            {Platform.OS === 'web' ? (
+                <View style={styles.container}>
+                    {renderPage(introPages[currentIndex], currentIndex)}
+                    <View style={[styles.pagination, styles.webPagination]}>
+                        {introPages.map((_, i) => (
+                            <View
+                                key={i}
+                                style={[
+                                    styles.paginationDot,
+                                    styles.webDot,
+                                    { backgroundColor: i === currentIndex ? '#58cc02' : 'rgba(255,255,255,0.3)' },
+                                ]}
+                            />
+                        ))}
+                    </View>
+                </View>
+            ) : (
             <Swiper
                 ref={swiperRef}  // Add ref to the Swiper
                 loop={false}
@@ -104,6 +124,7 @@ const IntroScreens = ({ onIntroComplete }) => {
             >
                 {introPages.map(renderPage)}
             </Swiper>
+            )}
 
             {/* Bottom navigation bar */}
             <View style={styles.bottomBar}>
@@ -142,6 +163,16 @@ const styles = StyleSheet.create({
     },
     pagination: {
         bottom: height * 0.176,
+    },
+    webPagination: {
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        flexDirection: 'row',
+        justifyContent: 'center',
+    },
+    webDot: {
+        marginHorizontal: 3,
     },
     paginationDot: {
         height: height * 0.023,
