@@ -17,8 +17,9 @@ import {
     formatReminderTime,
 } from '../utils/notifications';
 
-const { width } = Dimensions.get('window');
-const CONTENT_WIDTH = width * 0.9;
+const { width, height } = Dimensions.get('window');
+// On web, match the Lists tab width instead of stretching across a laptop screen.
+const CONTENT_WIDTH = Platform.OS === 'web' ? Math.min(width * 0.9, height * 0.46) : width * 0.9;
 
 const StatCard = ({ streakDays }) => (
     <Card style={styles.streakCard}>
@@ -234,12 +235,14 @@ const SettingsScreen = () => {
                 {stats && (
                     <>
                         <StatCard streakDays={stats.streakDays} />
-                        <ReminderSection
-                            enabled={stats.reminderEnabled}
-                            time={stats.reminderTime}
-                            onToggle={handleToggleReminder}
-                            onTimeChange={handleTimeChange}
-                        />
+                        {Platform.OS !== 'web' && (
+                            <ReminderSection
+                                enabled={stats.reminderEnabled}
+                                time={stats.reminderTime}
+                                onToggle={handleToggleReminder}
+                                onTimeChange={handleTimeChange}
+                            />
+                        )}
                     </>
                 )}
 

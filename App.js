@@ -1,5 +1,7 @@
 import 'react-native-reanimated';
+import './src/utils/webAlert';
 import React, { useEffect, useState, useCallback } from 'react';
+import { Platform } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import * as SplashScreen from 'expo-splash-screen';
@@ -66,7 +68,7 @@ export default function App() {
 					await saveUserData(userData);
 					await markLoginToday();
 
-					if (userData.settings.reminderEnabled) {
+					if (Platform.OS !== 'web' && userData.settings.reminderEnabled) {
 						const fresh = await loadUserData();
 						const streakDays = getEffectiveStreak(fresh.streak, todayString());
 						const { hour, minute } = parseReminderTime(fresh.settings.reminderTime);

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Dimensions, ScrollView, TouchableOpacity, Modal, TextInput, Alert, TouchableWithoutFeedback, Pressable } from 'react-native';
+import { View, StyleSheet, Dimensions, ScrollView, TouchableOpacity, Modal, TextInput, Alert, TouchableWithoutFeedback, Pressable, Platform } from 'react-native';
 import { getCustomListNames, getCustomListLengths, addList } from '../utils/HelperFunctions';
 import RecursiveText from '../components/RecursiveText';
 import InterText from '../components/InterText';
@@ -11,11 +11,12 @@ import { color, radii, space, text } from '../theme';
 const { width, height } = Dimensions.get('window');
 const CONTENT_WIDTH = height * 0.46;
 
+// "From image" uses on-device ML Kit text recognition, which has no web version.
 const PICKER_OPTIONS = [
     { key: 'type', icon: 'create-outline', label: 'Type words' },
     { key: 'image', icon: 'image-outline', label: 'From image' },
     { key: 'paste', icon: 'clipboard-outline', label: 'Paste from text' },
-];
+].filter((opt) => Platform.OS !== 'web' || opt.key !== 'image');
 
 const ListsScreen = ({ navigation }) => {
     const [listNames, setListNames] = useState([]);
