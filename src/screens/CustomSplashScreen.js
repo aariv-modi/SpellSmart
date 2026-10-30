@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { Animated, Image, Dimensions, StyleSheet } from 'react-native';
+import { Animated, Image, Dimensions, StyleSheet, Platform } from 'react-native';
 
 const { width, height } = Dimensions.get('window');
 
@@ -103,9 +103,12 @@ const styles = StyleSheet.create({
 		height: 80,
 		marginLeft: -40,
 		marginTop: -40,
+		// Browsers don't size the logo from aspectRatio, so center it explicitly
+		...Platform.select({ web: { alignItems: 'center', justifyContent: 'center' } }),
 	},
 	beeLogo: {
 		height: height * 0.235,
+		width: height * 0.235,
 		aspectRatio: 1,
 		resizeMode: 'contain',
 	},

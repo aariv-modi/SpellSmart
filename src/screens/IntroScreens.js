@@ -66,7 +66,7 @@ const IntroScreens = ({ onIntroComplete }) => {
     const renderPage = (page, index) => (
         <View key={index} style={[styles.page, { backgroundColor: page.backgroundColor }]}>
             <View style={{ height: height * 0.3, marginTop: 0.12 * height, justifyContent: 'center', alignItems: 'center' }}>
-                <Image source={page.image} style={{ aspectRatio: page.imageAspectRatio, height: page.imageHeight }} />
+                <Image source={page.image} style={{ aspectRatio: page.imageAspectRatio, height: page.imageHeight, width: page.imageHeight * page.imageAspectRatio }} />
             </View>
             <View style={{ height: 0.2 * height, justifyContent: 'center', alignItems: 'center' }}>
                 <RecursiveText text={page.title1} style={{ fontSize: scaleFont(42) }} />

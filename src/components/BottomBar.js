@@ -11,6 +11,8 @@ const { width, height } = Dimensions.get('window');
 const home = require('../../assets/images/target.png')
 const lists = require('../../assets/images/clipboard.png')
 const settings = require('../../assets/images/erm.png')
+// Capped by height so the highlight fits the bar on wide screens (web); phones use the width value.
+const ICON_BOX_SIZE = Math.min(width * 0.13, height * 0.09);
 
 const TAB_ICONS = {
     HomeTab: {
@@ -77,8 +79,8 @@ const BottomBar = ({ state, navigation }) => {
                     >
                         <View style={[
                             {
-                                width: width * 0.13,
-                                height: width * 0.13,
+                                width: ICON_BOX_SIZE,
+                                height: ICON_BOX_SIZE,
                                 alignItems: 'center',
                                 justifyContent: 'center'
                             },
@@ -93,7 +95,8 @@ const BottomBar = ({ state, navigation }) => {
                                 source={source}
                                 style={{
                                     aspectRatio: aspectRatio,
-                                    height: height * 0.05
+                                    height: height * 0.05,
+                                    width: height * 0.05 * aspectRatio
                                 }}
                             />
                         </View>

@@ -25,7 +25,7 @@ const ListTypeCard = function ({ title, image, aspectRatio, description, onTouch
                     source={image}
                     style={[
                         styles.image,
-                        { aspectRatio: aspectRatio },
+                        { aspectRatio: aspectRatio, width: height * 0.08 * aspectRatio },
                         disabled && { opacity: 0.5 }
                     ]}
                 />
