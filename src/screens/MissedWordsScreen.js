@@ -5,7 +5,7 @@ import { scaleFont } from "../utils/responsiveTextSize";
 
 import InterText from '../components/InterText';
 
-const { width, height } = Dimensions.get('window');
+const { height } = Dimensions.get('window');
 
 const MissedWordsScreen = ({ route }) => {
     const renderMissedWord = ({ item }) => (

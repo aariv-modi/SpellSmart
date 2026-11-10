@@ -5,7 +5,7 @@ import InterText from "./InterText";
 
 import { scaleFont } from "../utils/responsiveTextSize";
 
-const { width, height } = Dimensions.get('window');
+const { height } = Dimensions.get('window');
 
 const BuddyCard = function ({ text, ionicon, color, onTouch, style = {} }) {
     return (

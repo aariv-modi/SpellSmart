@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet, Dimensions } from 'react-native';
 
-const { width, height } = Dimensions.get('window');
+const { height } = Dimensions.get('window');
 
 const ProgressBar = ({ progress }) => {
     const clampedProgress = Math.max(0, Math.min(1, progress));

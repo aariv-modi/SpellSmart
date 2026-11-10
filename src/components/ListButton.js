@@ -3,7 +3,7 @@ import { Dimensions, Pressable, View } from "react-native"
 import InterText from "./InterText";
 import { scaleFont } from "../utils/responsiveTextSize";
 
-const { width, height } = Dimensions.get('window');
+const { height } = Dimensions.get('window');
 
 const ListButton = function ({ title, onPress, numWords }) {
     return (

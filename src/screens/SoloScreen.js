@@ -15,7 +15,7 @@ import InterText from '../components/InterText';
 import FeedbackOverlay from '../components/FeedbackOverlay';
 import DefinitionModal from '../components/DefinitionModal';
 
-const { width, height } = Dimensions.get('window');
+const { height } = Dimensions.get('window');
 
 const SoloScreen = ({ navigation, route }) => {
     const { list, listName } = route.params;

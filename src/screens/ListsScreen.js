@@ -9,7 +9,7 @@ import ListCard from '../components/ListCard';
 import Card from '../components/ui/Card';
 import { color, radii, space, text } from '../theme';
 
-const { width, height } = Dimensions.get('window');
+const { height } = Dimensions.get('window');
 const CONTENT_WIDTH = height * 0.46;
 
 // "From image" uses on-device ML Kit text recognition, which has no web version.

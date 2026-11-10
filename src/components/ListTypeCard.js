@@ -4,7 +4,7 @@ import RecursiveText from "./RecursiveText";
 import InterText from "./InterText";
 import { scaleFont } from "../utils/responsiveTextSize";
 
-const { width, height } = Dimensions.get('window');
+const { height } = Dimensions.get('window');
 
 const ListTypeCard = function ({ title, image, aspectRatio, description, onTouch, disabled = false, style = {} }) {
     const handlePress = () => {
@@ -17,7 +17,7 @@ const ListTypeCard = function ({ title, image, aspectRatio, description, onTouch
             <View
                 style={[
                     styles.card,
-                    { backgroundColor: true ? '#333333' : 'white', opacity: disabled ? 0.5 : 1 },
+                    { backgroundColor: '#333333', opacity: disabled ? 0.5 : 1 },
                     style
                 ]}
             >
@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         fontSize: scaleFont(18),
         marginTop: height * 0.03,
-        color: true ? '#ffc800' : '#1cb0f6'
+        color: '#ffc800'
     },
     description: {
         alignSelf: 'center',
@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
         marginTop: height * 0.025,
         width: height * 0.18,
         fontSize: scaleFont(13),
-        color: true ? 'white' : '#424242'
+        color: 'white'
     }
 });
 

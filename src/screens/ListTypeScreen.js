@@ -238,7 +238,7 @@ const styles = StyleSheet.create({
     modalContent: {
         width: 0.37 * height,
         height: 0.13 * height,
-        backgroundColor: true ? '#333333' : 'white',
+        backgroundColor: '#333333',
         borderRadius: 20,
         alignItems: 'center',
         shadowColor: "#000",
@@ -253,7 +253,7 @@ const styles = StyleSheet.create({
     modalTitle: {
         fontSize: scaleFont(20),
         fontWeight: 'bold',
-        color: true ? 'white' : '#424242',
+        color: 'white',
         marginTop: height * 0.02
     },
     gradeButtonContainer: {

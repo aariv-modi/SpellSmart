@@ -5,7 +5,6 @@ import { Platform } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import * as SplashScreen from 'expo-splash-screen';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { loadFontsAndAssets } from './src/utils/appInitialization';
 import { defaultUserData } from './src/utils/defaultUserData';
 import { checkNewUser } from './src/utils/HelperFunctions';
@@ -58,7 +57,6 @@ export default function App() {
 	useEffect(() => {
 		const prepare = async () => {
 			try {
-				//await AsyncStorage.clear();
 				const isNewUser = await checkNewUser();
 				setNewUser(isNewUser);
 

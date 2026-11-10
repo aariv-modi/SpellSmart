@@ -7,7 +7,7 @@ import { Ionicons } from "@expo/vector-icons";
 
 const { width, height } = Dimensions.get('window');
 
-const TopBar = ({ options, back = false }) => {
+const TopBar = ({ options }) => {
     const navigation = useNavigation();
     const currentScreenName = useRoute().name;
     const screensWithoutBackButton = ['HomeMain', 'ListsMain', 'SettingsMain', 'Solo', 'Buddy'];

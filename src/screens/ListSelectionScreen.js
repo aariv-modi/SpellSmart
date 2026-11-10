@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { View, StyleSheet, Dimensions, ScrollView } from "react-native";
-import { Ionicons } from '@expo/vector-icons';
 
 import ListButton from "../components/ListButton";
 import RecursiveText from "../components/RecursiveText";
@@ -66,9 +65,6 @@ const ListSelectionScreen = ({ navigation, route }) => {
     const [listNames, updateListNames] = useState([]);
     const [listLengths, updateListLengths] = useState([]);
     const [uilList, setUilList] = useState(null);
-
-    // Get grade level for header display
-    const gradeLevel = route.params.gradeLevel?.replace('-', ' to ');
 
     useEffect(() => {
         const getLists = async () => {

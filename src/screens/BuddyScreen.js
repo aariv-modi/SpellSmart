@@ -14,7 +14,7 @@ import BuddyCard from "../components/BuddyCard";
 import FeedbackOverlay from '../components/FeedbackOverlay';
 import DefinitionModal from '../components/DefinitionModal';
 
-const { width, height } = Dimensions.get('window');
+const { height } = Dimensions.get('window');
 
 const BuddyScreen = ({ navigation, route }) => {
     const { list, listName } = route.params

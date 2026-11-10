@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { Animated, Image, Dimensions, StyleSheet, Platform } from 'react-native';
 
-const { width, height } = Dimensions.get('window');
+const { height } = Dimensions.get('window');
 
 const CustomSplashScreen = ({ onComplete }) => {
 	const sheetPosition = useRef(new Animated.Value(0)).current;

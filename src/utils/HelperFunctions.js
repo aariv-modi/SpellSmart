@@ -30,20 +30,6 @@ export const getList = async (listName) => {
     return data.spellingLists.find(list => list.name === listName).words;
 }
 
-export const getLists = async () => {
-    const allKeys = await AsyncStorage.getAllKeys()
-    let allValues = await AsyncStorage.multiGet(allKeys)
-    allValues = allValues.map(([, value]) => value)
-
-    for (i = 0; i < allKeys.length; i++) {
-        if (allKeys[i] == "bookmarked-words" || allKeys[i] == "current-words") {
-            allKeys.splice(i, 1)
-            allValues.splice(i, 1)
-        }
-    }
-    return [allKeys, allValues]
-}
-
 export const bookmarkWord = async (word) => {
     const data = JSON.parse(await AsyncStorage.getItem('userData'));
     if (data.bookmarkedWords.includes(word)) return;

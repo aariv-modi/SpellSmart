@@ -1,6 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, Dimensions, TouchableOpacity, Pressable } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { View, Text, StyleSheet, Dimensions, Pressable } from 'react-native';
 import RecursiveText from '../components/RecursiveText';
 import InterText from '../components/InterText';
 import { scaleFont } from '../utils/responsiveTextSize';

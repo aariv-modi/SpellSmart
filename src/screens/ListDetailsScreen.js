@@ -7,9 +7,9 @@ import RecursiveText from '../components/RecursiveText';
 import InterText from '../components/InterText';
 import { scaleFont } from '../utils/responsiveTextSize';
 
-const { width, height } = Dimensions.get('window');
+const { height } = Dimensions.get('window');
 
-const ListDetailsScreen = ({ navigation, route }) => {
+const ListDetailsScreen = ({ route }) => {
     const { listName } = route.params;
     const [words, setWords] = useState([]);
     const [newWord, setNewWord] = useState('');

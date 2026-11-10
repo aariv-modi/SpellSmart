@@ -5,7 +5,6 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web",
-    "eject": "expo eject",
     "generate-audio": "node scripts/generate-audio.mjs",
     "publish-content": "node scripts/publish-content.mjs",
     "deploy-web": "expo export --platform web --clear && cd worker && npx wrangler pages deploy ../dist --project-name spellsmart --branch main"
@@ -23,6 +22,7 @@
     "expo-asset": "~12.0.13",
     "expo-audio": "~1.1.1",
     "expo-build-properties": "~1.0.10",
+    "expo-constants": "~18.0.13",
     "expo-dev-client": "~6.0.21",
     "expo-font": "~14.0.11",
     "expo-haptics": "~15.0.8",
