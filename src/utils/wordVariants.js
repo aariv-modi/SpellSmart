@@ -10,7 +10,12 @@ export const spellings = (entry) =>
 
 export const primarySpelling = (entry) => spellings(entry)[0] ?? entry;
 
+// Compare answers by letters, not by how the keyboard encoded them: iOS turns ' into ’
+// ("Smart Punctuation"), and an accented letter can arrive as one character or two.
+const normalizeAnswer = (text) =>
+    text.normalize('NFC').replace(/[‘’ʼ]/g, "'").replace(/\s+/g, ' ').trim().toLowerCase();
+
 export const isCorrectSpelling = (input, entry) => {
-    const answer = input.trim().toLowerCase();
-    return spellings(entry).some((s) => s.toLowerCase() === answer);
+    const answer = normalizeAnswer(input);
+    return spellings(entry).some((s) => normalizeAnswer(s) === answer);
 };
