@@ -58,7 +58,7 @@ npx expo start
 
 The app uses native modules, so it needs a [development build](https://docs.expo.dev/develop/development-builds/introduction/) rather than Expo Go. Headings use Feather Bold, a commercial font that isn't included in this repo. Without it, headings fall back to Nunito.
 
-Tests (streak logic and saved-data migration), linting and formatting:
+Tests (answer checking, custom lists, list downloads, streaks, saved-data migration and the word-list data), linting and formatting:
 
 ```bash
 npm test

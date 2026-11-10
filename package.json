@@ -11,7 +11,7 @@
     "lint": "eslint .",
     "format": "prettier --write \"**/*.{js,mjs}\"",
     "format:check": "prettier --check \"**/*.{js,mjs}\"",
-    "test": "node scripts/test-streak.mjs && node scripts/test-migration.mjs"
+    "test": "jest"
   },
   "dependencies": {
     "@expo/metro-runtime": "~6.1.2",
@@ -56,6 +56,14 @@
     "eslint": "^9.39.5",
     "eslint-config-expo": "~10.0.0",
     "eslint-config-prettier": "^10.1.8",
+    "jest": "~29.7.0",
+    "jest-expo": "54.0.17",
     "prettier": "^3.9.10"
+  },
+  "jest": {
+    "preset": "jest-expo",
+    "transform": {
+      "^.+\\.mjs$": "babel-jest"
+    }
   }
 }

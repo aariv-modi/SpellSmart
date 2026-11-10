@@ -9,4 +9,17 @@ module.exports = defineConfig([
     {
         ignores: ['dist/*', 'audio-output/*', 'worker/node_modules/*', '.expo/*'],
     },
+    {
+        files: ['**/__tests__/**/*.js'],
+        languageOptions: {
+            globals: {
+                jest: 'readonly',
+                describe: 'readonly',
+                test: 'readonly',
+                expect: 'readonly',
+                beforeEach: 'readonly',
+                afterEach: 'readonly',
+            },
+        },
+    },
 ]);
