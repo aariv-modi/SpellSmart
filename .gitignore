@@ -142,3 +142,18 @@ audio-output/
 # Service account keys (defense in depth — don't commit anywhere in the repo)
 *-service-account*.json
 gcp-*.json
+
+# Signing credentials (EAS manages these remotely)
+credentials.json
+credentials/
+*.jks
+*.keystore
+
+# Commercial font that can't be redistributed; see src/utils/headingFont.js
+assets/fonts/Feather-Bold.ttf
+
+# Editor and tool state
+.vs/
+.vscode/
+.claude/
+*.out

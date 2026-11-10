@@ -1,10 +1,12 @@
 import * as Font from 'expo-font';
 import { Asset } from 'expo-asset';
 
+import { HEADING_FONT_FILES } from './headingFont';
+
 const FONTS = {
 	'Inter-SemiBold': require('../../assets/fonts/Inter-SemiBold.ttf'),
 	'Recursive-Bold': require('../../assets/fonts/Recursive-Bold.ttf'),
-	'Feather-Bold': require('../../assets/fonts/Feather-Bold.ttf'),
+	...HEADING_FONT_FILES,
 	'Nunito-SemiBold': require('../../assets/fonts/Nunito-SemiBold.ttf'),
 };
 
