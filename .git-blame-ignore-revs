@@ -1,0 +1,2 @@
+# One-time Prettier reformat (no behavior change). GitHub and `git blame --ignore-revs-file` skip it.
+00fdb7552bacf8fce6703588dab76b32e3e72f3a
