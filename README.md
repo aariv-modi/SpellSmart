@@ -58,12 +58,15 @@ npx expo start
 
 The app uses native modules, so it needs a [development build](https://docs.expo.dev/develop/development-builds/introduction/) rather than Expo Go. Headings use Feather Bold, a commercial font that isn't included in this repo. Without it, headings fall back to Nunito.
 
-Tests for streak logic and saved-data migration:
+Tests (streak logic and saved-data migration), linting and formatting:
 
 ```bash
-node scripts/test-streak.mjs
-node scripts/test-migration.mjs
+npm test
+npm run lint
+npm run format
 ```
+
+CI runs all three plus a bundle build on every push.
 
 To regenerate audio and publish lists, copy `.env.example` to `.env`, fill it in, then run `npm run generate-audio` and `npm run publish-content`. Worker setup is in [worker/README.md](worker/README.md).
 
