@@ -1,6 +1,16 @@
 import React, { useState, useCallback } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
-import { View, Dimensions, TouchableWithoutFeedback, ScrollView, TouchableOpacity, Modal, TextInput, StyleSheet, Alert } from 'react-native';
+import {
+    View,
+    Dimensions,
+    TouchableWithoutFeedback,
+    ScrollView,
+    TouchableOpacity,
+    Modal,
+    TextInput,
+    StyleSheet,
+    Alert,
+} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { getList, deleteWord, addWord } from '../utils/HelperFunctions';
 import RecursiveText from '../components/RecursiveText';
@@ -15,10 +25,13 @@ const ListDetailsScreen = ({ route }) => {
     const [newWord, setNewWord] = useState('');
     const [isAddWordModalVisible, setIsAddWordModalVisible] = useState(false);
 
-    const handleDeleteWord = useCallback(async (wordToDelete) => {
-        await deleteWord(wordToDelete, listName);
-        setWords(words.filter(word => word !== wordToDelete));
-    }, [words, listName]);
+    const handleDeleteWord = useCallback(
+        async (wordToDelete) => {
+            await deleteWord(wordToDelete, listName);
+            setWords(words.filter((word) => word !== wordToDelete));
+        },
+        [words, listName],
+    );
 
     // Function to add a new word
     const handleAddWord = useCallback(async () => {
@@ -28,11 +41,9 @@ const ListDetailsScreen = ({ route }) => {
             await addWord(trimmedWord, listName);
             setNewWord('');
             setIsAddWordModalVisible(false);
-        }
-        else if (!trimmedWord) {
+        } else if (!trimmedWord) {
             Alert.alert('Please enter a word');
-        }
-        else {
+        } else {
             Alert.alert('This word already exists!');
         }
     }, [newWord, words, listName]);
@@ -49,14 +60,19 @@ const ListDetailsScreen = ({ route }) => {
                 setWords(await getList(listName));
             };
             fetchList();
-        }, [listName])
+        }, [listName]),
     );
 
     const renderListItems = () => {
         return words.map((item, key) => (
             <TouchableOpacity style={styles.wordItem} key={item}>
                 <InterText style={styles.wordText} text={`${key + 1}.     ${item}`} />
-                <Ionicons name="close" size={20} color="white" onPress={() => handleDeleteWord(item)} />
+                <Ionicons
+                    name="close"
+                    size={20}
+                    color="white"
+                    onPress={() => handleDeleteWord(item)}
+                />
             </TouchableOpacity>
         ));
     };
@@ -67,9 +83,7 @@ const ListDetailsScreen = ({ route }) => {
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={{ alignItems: 'center' }}
             >
-                <View style={styles.listContainer}>
-                    {renderListItems()}
-                </View>
+                <View style={styles.listContainer}>{renderListItems()}</View>
                 {/* Add some padding at the bottom for better scrolling */}
                 <View style={{ height: height * 0.1 }} />
             </ScrollView>
@@ -77,11 +91,7 @@ const ListDetailsScreen = ({ route }) => {
             <TouchableOpacity style={styles.fab} onPress={() => setIsAddWordModalVisible(true)}>
                 <Ionicons name="add" size={height * 0.035} color="white" />
             </TouchableOpacity>
-            <Modal
-                animationType="slide"
-                transparent={true}
-                visible={isAddWordModalVisible}
-            >
+            <Modal animationType="slide" transparent={true} visible={isAddWordModalVisible}>
                 <TouchableWithoutFeedback onPress={closeModal}>
                     <View style={styles.modalContainer}>
                         <TouchableWithoutFeedback>
@@ -97,7 +107,7 @@ const ListDetailsScreen = ({ route }) => {
                                     textAlign="center"
                                     autoComplete="off"
                                     autoFocus={true}
-                                    autoCapitalize='none'
+                                    autoCapitalize="none"
                                     autoCorrect={false}
                                     returnKeyType="done"
                                     onSubmitEditing={handleAddWord}
@@ -114,8 +124,8 @@ const ListDetailsScreen = ({ route }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#1a1a1a",
-        alignItems: 'center'
+        backgroundColor: '#1a1a1a',
+        alignItems: 'center',
     },
     listContainer: {
         marginTop: height * 0.01,
@@ -128,10 +138,10 @@ const styles = StyleSheet.create({
         marginTop: height * 0.015,
         flexDirection: 'row',
         justifyContent: 'space-between',
-        alignItems: 'center'
+        alignItems: 'center',
     },
     wordText: {
-        fontSize: scaleFont(18)
+        fontSize: scaleFont(18),
     },
     fab: {
         position: 'absolute',
@@ -153,14 +163,14 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'rgba(0,0,0,0.5)'
+        backgroundColor: 'rgba(0,0,0,0.5)',
     },
     modalContent: {
         width: height * 0.37,
         height: height * 0.16,
         backgroundColor: '#333333',
         borderRadius: 20,
-        alignItems: 'center'
+        alignItems: 'center',
     },
     modalTitle: {
         fontSize: scaleFont(20),
@@ -173,24 +183,24 @@ const styles = StyleSheet.create({
         color: 'white',
         borderRadius: 10,
         marginTop: height * 0.025,
-        fontSize: scaleFont(16)
+        fontSize: scaleFont(16),
     },
     modalButtonContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        width: '100%'
+        width: '100%',
     },
     modalButton: {
         backgroundColor: '#1e90ff',
         padding: 10,
         borderRadius: 10,
         width: '45%',
-        alignItems: 'center'
+        alignItems: 'center',
     },
     modalButtonText: {
         color: 'white',
-        fontWeight: 'bold'
-    }
+        fontWeight: 'bold',
+    },
 });
 
 export default ListDetailsScreen;

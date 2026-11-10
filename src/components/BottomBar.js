@@ -1,32 +1,32 @@
-import React from "react";
-import { Dimensions, TouchableOpacity, SafeAreaView, Image, View } from "react-native"
+import React from 'react';
+import { Dimensions, TouchableOpacity, SafeAreaView, Image, View } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
-import HomeNavigation from "./navigation/HomeNavigation";
-import ListsNavigation from "./navigation/ListsNavigation";
-import SettingsNavigation from "./navigation/SettingsNavigation";
+import HomeNavigation from './navigation/HomeNavigation';
+import ListsNavigation from './navigation/ListsNavigation';
+import SettingsNavigation from './navigation/SettingsNavigation';
 
 const Tab = createBottomTabNavigator();
 const { width, height } = Dimensions.get('window');
-const home = require('../../assets/images/target.png')
-const lists = require('../../assets/images/clipboard.png')
-const settings = require('../../assets/images/erm.png')
+const home = require('../../assets/images/target.png');
+const lists = require('../../assets/images/clipboard.png');
+const settings = require('../../assets/images/erm.png');
 // Capped by height so the highlight fits the bar on wide screens (web); phones use the width value.
 const ICON_BOX_SIZE = Math.min(width * 0.13, height * 0.09);
 
 const TAB_ICONS = {
     HomeTab: {
         source: home,
-        aspectRatio: 462 / 476
+        aspectRatio: 462 / 476,
     },
     ListsTab: {
         source: lists,
-        aspectRatio: 361 / 463
+        aspectRatio: 361 / 463,
     },
     SettingsTab: {
         source: settings,
-        aspectRatio: 376 / 462
-    }
+        aspectRatio: 376 / 462,
+    },
 };
 
 const BottomBar = ({ state, navigation }) => {
@@ -74,29 +74,31 @@ const BottomBar = ({ state, navigation }) => {
                         style={{
                             flex: 1,
                             alignItems: 'center',
-                            justifyContent: 'center'
+                            justifyContent: 'center',
                         }}
                     >
-                        <View style={[
-                            {
-                                width: ICON_BOX_SIZE,
-                                height: ICON_BOX_SIZE,
-                                alignItems: 'center',
-                                justifyContent: 'center'
-                            },
-                            isFocused && {
-                                borderWidth: 2,
-                                borderColor: '#1cb0f6',
-                                borderRadius: 8,
-                                backgroundColor: 'rgba(57, 193, 240, 0.1)' // Light blue tint at 10% opacity
-                            }
-                        ]}>
+                        <View
+                            style={[
+                                {
+                                    width: ICON_BOX_SIZE,
+                                    height: ICON_BOX_SIZE,
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                },
+                                isFocused && {
+                                    borderWidth: 2,
+                                    borderColor: '#1cb0f6',
+                                    borderRadius: 8,
+                                    backgroundColor: 'rgba(57, 193, 240, 0.1)', // Light blue tint at 10% opacity
+                                },
+                            ]}
+                        >
                             <Image
                                 source={source}
                                 style={{
                                     aspectRatio: aspectRatio,
                                     height: height * 0.05,
-                                    width: height * 0.05 * aspectRatio
+                                    width: height * 0.05 * aspectRatio,
                                 }}
                             />
                         </View>
@@ -115,18 +117,9 @@ const BottomNavigation = () => {
                 headerShown: false,
             })}
         >
-            <Tab.Screen
-                name="HomeTab"
-                component={HomeNavigation}
-            />
-            <Tab.Screen
-                name="ListsTab"
-                component={ListsNavigation}
-            />
-            <Tab.Screen
-                name="SettingsTab"
-                component={SettingsNavigation}
-            />
+            <Tab.Screen name="HomeTab" component={HomeNavigation} />
+            <Tab.Screen name="ListsTab" component={ListsNavigation} />
+            <Tab.Screen name="SettingsTab" component={SettingsNavigation} />
         </Tab.Navigator>
     );
 };

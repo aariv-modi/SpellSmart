@@ -1,5 +1,13 @@
 import React, { useState, useMemo } from 'react';
-import { View, TextInput, StyleSheet, Dimensions, Pressable, ScrollView, Alert } from 'react-native';
+import {
+    View,
+    TextInput,
+    StyleSheet,
+    Dimensions,
+    Pressable,
+    ScrollView,
+    Alert,
+} from 'react-native';
 import InterText from '../components/InterText';
 import RecursiveText from '../components/RecursiveText';
 import { addListWithWords, uniqueListName } from '../utils/HelperFunctions';
@@ -80,7 +88,10 @@ const PasteListScreen = ({ navigation }) => {
                 />
                 {parsedWords.length > 0 && (
                     <InterText
-                        text={parsedWords.slice(0, 30).join(', ') + (parsedWords.length > 30 ? '…' : '')}
+                        text={
+                            parsedWords.slice(0, 30).join(', ') +
+                            (parsedWords.length > 30 ? '…' : '')
+                        }
                         style={styles.previewBody}
                     />
                 )}

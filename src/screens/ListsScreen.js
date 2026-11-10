@@ -1,6 +1,18 @@
 import React, { useState, useCallback } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
-import { View, StyleSheet, Dimensions, ScrollView, TouchableOpacity, Modal, TextInput, Alert, TouchableWithoutFeedback, Pressable, Platform } from 'react-native';
+import {
+    View,
+    StyleSheet,
+    Dimensions,
+    ScrollView,
+    TouchableOpacity,
+    Modal,
+    TextInput,
+    Alert,
+    TouchableWithoutFeedback,
+    Pressable,
+    Platform,
+} from 'react-native';
 import { getCustomListNames, getCustomListLengths, addList } from '../utils/HelperFunctions';
 import RecursiveText from '../components/RecursiveText';
 import InterText from '../components/InterText';
@@ -35,7 +47,7 @@ const ListsScreen = ({ navigation }) => {
     useFocusEffect(
         useCallback(() => {
             loadLists();
-        }, [loadLists])
+        }, [loadLists]),
     );
 
     const handlePick = (key) => {
@@ -85,7 +97,9 @@ const ListsScreen = ({ navigation }) => {
                         {listNames.map((item, index) => (
                             <ListCard
                                 key={item}
-                                onTouch={() => navigation.navigate('ListDetails', { listName: item })}
+                                onTouch={() =>
+                                    navigation.navigate('ListDetails', { listName: item })
+                                }
                                 title={item}
                                 length={listLengths[index]}
                                 style={{ marginTop: space.md }}
@@ -142,7 +156,10 @@ const ListsScreen = ({ navigation }) => {
                     <View style={styles.modalBackdrop}>
                         <TouchableWithoutFeedback>
                             <Card padding="lg" style={styles.namePromptCard}>
-                                <RecursiveText text="Create New List" style={styles.namePromptTitle} />
+                                <RecursiveText
+                                    text="Create New List"
+                                    style={styles.namePromptTitle}
+                                />
                                 <TextInput
                                     style={styles.input}
                                     value={newListName}

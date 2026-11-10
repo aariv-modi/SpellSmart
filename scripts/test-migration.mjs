@@ -32,11 +32,23 @@ section('A. pre-v14 default-shape user');
     const out = migrateUserData(input);
 
     assert('streak added', out.streak?.currentDays === 0 && out.streak?.lastPracticeDate === null);
-    assert('streak has only currentDays + lastPracticeDate', Object.keys(out.streak).sort().join(',') === 'currentDays,lastPracticeDate');
+    assert(
+        'streak has only currentDays + lastPracticeDate',
+        Object.keys(out.streak).sort().join(',') === 'currentDays,lastPracticeDate',
+    );
     assert('reviewQueue added', Array.isArray(out.reviewQueue) && out.reviewQueue.length === 0);
-    assert('sessionHistory added', Array.isArray(out.sessionHistory) && out.sessionHistory.length === 0);
-    assert('settings added', out.settings?.reminderTime === '19:00' && out.settings?.reminderEnabled === false);
-    assert('settings has only reminderTime + reminderEnabled', Object.keys(out.settings).sort().join(',') === 'reminderEnabled,reminderTime');
+    assert(
+        'sessionHistory added',
+        Array.isArray(out.sessionHistory) && out.sessionHistory.length === 0,
+    );
+    assert(
+        'settings added',
+        out.settings?.reminderTime === '19:00' && out.settings?.reminderEnabled === false,
+    );
+    assert(
+        'settings has only reminderTime + reminderEnabled',
+        Object.keys(out.settings).sort().join(',') === 'reminderEnabled,reminderTime',
+    );
     assert('subscription added', out.subscription?.plusUntil === null);
     assert('newUser dropped', !('newUser' in out));
     assert('recentLists dropped', !('recentLists' in out));
@@ -62,9 +74,18 @@ section('B. pre-v14 user with real data');
     };
     const out = migrateUserData(input);
 
-    assert('spellingLists preserved', JSON.stringify(out.spellingLists) === JSON.stringify(input.spellingLists));
-    assert('bookmarkedWords preserved', JSON.stringify(out.bookmarkedWords) === JSON.stringify(input.bookmarkedWords));
-    assert('missedWords preserved', JSON.stringify(out.missedWords) === JSON.stringify(input.missedWords));
+    assert(
+        'spellingLists preserved',
+        JSON.stringify(out.spellingLists) === JSON.stringify(input.spellingLists),
+    );
+    assert(
+        'bookmarkedWords preserved',
+        JSON.stringify(out.bookmarkedWords) === JSON.stringify(input.bookmarkedWords),
+    );
+    assert(
+        'missedWords preserved',
+        JSON.stringify(out.missedWords) === JSON.stringify(input.missedWords),
+    );
     assert('numSessions preserved', out.numSessions === 47);
     assert('newSoloMode preserved', out.newSoloMode === false);
     assert('streak added', out.streak !== undefined);
@@ -84,7 +105,15 @@ section('C. already-migrated user (idempotency)');
         numSessions: 5,
         streak: { currentDays: 3, lastPracticeDate: '2026-04-30' },
         reviewQueue: [{ word: 'photosynthesis', correctStreak: 1, addedAt: 1, lastReviewedAt: 2 }],
-        sessionHistory: [{ date: '2026-04-30', wordsAttempted: 10, wordsCorrect: 8, listName: 'X', durationMs: 60000 }],
+        sessionHistory: [
+            {
+                date: '2026-04-30',
+                wordsAttempted: 10,
+                wordsCorrect: 8,
+                listName: 'X',
+                durationMs: 60000,
+            },
+        ],
         settings: { reminderTime: '20:00', reminderEnabled: true },
         subscription: { plusUntil: '2027-01-01' },
     };
@@ -113,10 +142,20 @@ section('E. user with stale slice-2 sub-fields');
         bookmarkedWords: [],
         missedWords: [],
         numSessions: 1,
-        streak: { currentDays: 5, lastPracticeDate: '2026-04-30', dailyWordCount: 7, dailyDate: '2026-04-30' },
+        streak: {
+            currentDays: 5,
+            lastPracticeDate: '2026-04-30',
+            dailyWordCount: 7,
+            dailyDate: '2026-04-30',
+        },
         reviewQueue: [],
         sessionHistory: [],
-        settings: { reminderTime: '19:00', reminderEnabled: false, lastSeenList: { listName: 'A-D', list: ['a'] }, lastSeenMode: 'Solo' },
+        settings: {
+            reminderTime: '19:00',
+            reminderEnabled: false,
+            lastSeenList: { listName: 'A-D', list: ['a'] },
+            lastSeenMode: 'Solo',
+        },
         subscription: { plusUntil: null },
     };
     const out = migrateUserData(input);

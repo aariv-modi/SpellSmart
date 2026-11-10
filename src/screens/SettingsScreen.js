@@ -1,5 +1,15 @@
 import React, { useState, useCallback } from 'react';
-import { View, Dimensions, StyleSheet, Pressable, ScrollView, Switch, Alert, Modal, Platform } from 'react-native';
+import {
+    View,
+    Dimensions,
+    StyleSheet,
+    Pressable,
+    ScrollView,
+    Switch,
+    Alert,
+    Modal,
+    Platform,
+} from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useFocusEffect } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
@@ -197,7 +207,7 @@ const SettingsScreen = () => {
     useFocusEffect(
         useCallback(() => {
             getStats().then(setStats);
-        }, [])
+        }, []),
     );
 
     const handleToggleReminder = async (value) => {
@@ -206,7 +216,7 @@ const SettingsScreen = () => {
             if (!granted) {
                 Alert.alert(
                     'Notifications blocked',
-                    'Allow notifications for SpellSmart in your device settings to enable daily reminders.'
+                    'Allow notifications for SpellSmart in your device settings to enable daily reminders.',
                 );
                 return;
             }

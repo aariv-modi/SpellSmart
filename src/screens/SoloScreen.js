@@ -1,16 +1,16 @@
-import React, { useState, useEffect, useRef } from "react";
-import { View, TextInput, StyleSheet, Dimensions, FlatList, Pressable } from "react-native";
+import React, { useState, useEffect, useRef } from 'react';
+import { View, TextInput, StyleSheet, Dimensions, FlatList, Pressable } from 'react-native';
 
 import { Ionicons } from '@expo/vector-icons';
-import { scaleFont } from "../utils/responsiveTextSize";
-import { getBookmarkedWords } from "../utils/HelperFunctions";
-import { endSession } from "../utils/userData";
-import { speak, speakWord, stopSpeak } from "../utils/speak";
-import { isCorrectSpelling, primarySpelling } from "../utils/wordVariants";
-import { feedbackCorrect, feedbackIncorrect } from "../utils/sfx";
+import { scaleFont } from '../utils/responsiveTextSize';
+import { getBookmarkedWords } from '../utils/HelperFunctions';
+import { endSession } from '../utils/userData';
+import { speak, speakWord, stopSpeak } from '../utils/speak';
+import { isCorrectSpelling, primarySpelling } from '../utils/wordVariants';
+import { feedbackCorrect, feedbackIncorrect } from '../utils/sfx';
 
 import ProgressBar from '../components/ProgressBar';
-import RecursiveText from "../components/RecursiveText";
+import RecursiveText from '../components/RecursiveText';
 import InterText from '../components/InterText';
 import FeedbackOverlay from '../components/FeedbackOverlay';
 import DefinitionModal from '../components/DefinitionModal';
@@ -23,7 +23,7 @@ const SoloScreen = ({ navigation, route }) => {
     const words = useRef(list);
     const startTime = useRef(Date.now());
     const [missedWords, setMissedWords] = useState([]);
-    const [userSpelling, setUserSpelling] = useState("");
+    const [userSpelling, setUserSpelling] = useState('');
     const [bookmarked, setBookmarked] = useState(false);
     const [bookmarkedWords, setBookmarkedWords] = useState([]);
     const feedbackTick = useRef(0);
@@ -53,13 +53,13 @@ const SoloScreen = ({ navigation, route }) => {
 
         const nextWord = getCurrentWord();
         setBookmarked(bookmarkedWords.includes(nextWord));
-        setUserSpelling("");
+        setUserSpelling('');
         await speakWord(nextWord);
     };
 
     const handleIncorrectSpelling = async (currentWord) => {
-        setMissedWords(prev => [...new Set([...prev, currentWord])]);
-        setUserSpelling("");
+        setMissedWords((prev) => [...new Set([...prev, currentWord])]);
+        setUserSpelling('');
         showFeedback('incorrect');
         await feedbackIncorrect();
 
@@ -89,9 +89,9 @@ const SoloScreen = ({ navigation, route }) => {
 
     const toggleBookmark = () => {
         const currentWord = getCurrentWord();
-        setBookmarkedWords(prev => {
+        setBookmarkedWords((prev) => {
             if (bookmarked) {
-                return prev.filter(word => word !== currentWord);
+                return prev.filter((word) => word !== currentWord);
             }
             return [...prev, currentWord];
         });
@@ -118,7 +118,13 @@ const SoloScreen = ({ navigation, route }) => {
                 { name: 'HomeMain' },
                 {
                     name: 'EndSession',
-                    params: { wordsAttempted, wordsCorrect, missedFromSession: missedWords, listName, mode: 'Solo' },
+                    params: {
+                        wordsAttempted,
+                        wordsCorrect,
+                        missedFromSession: missedWords,
+                        listName,
+                        mode: 'Solo',
+                    },
                 },
             ],
         });
@@ -140,9 +146,7 @@ const SoloScreen = ({ navigation, route }) => {
         return stopSpeak;
     }, []);
 
-    const renderMissedWord = ({ item }) => (
-        <InterText text={item} style={styles.missedWordItem} />
-    );
+    const renderMissedWord = ({ item }) => <InterText text={item} style={styles.missedWordItem} />;
 
     return (
         <View style={styles.container}>
@@ -158,7 +162,7 @@ const SoloScreen = ({ navigation, route }) => {
             <View style={[styles.textInputContainer, busy && styles.textInputContainerBusy]}>
                 <TextInput
                     autoComplete="off"
-                    autoCapitalize='none'
+                    autoCapitalize="none"
                     autoCorrect={false}
                     placeholder="Enter here"
                     placeholderTextColor="white"
@@ -185,7 +189,7 @@ const SoloScreen = ({ navigation, route }) => {
                         onPress={() => setDefinitionVisible(true)}
                     />
                     <Ionicons
-                        name={bookmarked ? "star" : "star-outline"}
+                        name={bookmarked ? 'star' : 'star-outline'}
                         size={height * 0.033}
                         color="#ffc800"
                         onPress={toggleBookmark}
@@ -205,14 +209,14 @@ const SoloScreen = ({ navigation, route }) => {
                 <FlatList
                     style={styles.missedWordsList}
                     showsVerticalScrollIndicator={false}
-                    keyExtractor={item => item}
+                    keyExtractor={(item) => item}
                     data={missedWords}
                     renderItem={renderMissedWord}
                 />
             </View>
 
-            <Pressable 
-                onPress={handleEnd} 
+            <Pressable
+                onPress={handleEnd}
                 style={({ pressed }) => [styles.endButton, pressed && styles.endButtonPressed]}
             >
                 <RecursiveText text="END" style={styles.endButtonText} />
@@ -226,16 +230,16 @@ const styles = StyleSheet.create({
         height: height * 0.82,
         backgroundColor: '#1a1a1a',
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
     },
     progressContainer: {
         flexDirection: 'row',
         alignItems: 'center',
         width: height * 0.405,
-        justifyContent: 'space-between'
+        justifyContent: 'space-between',
     },
     progressText: {
-        fontSize: scaleFont(24)
+        fontSize: scaleFont(24),
     },
     textInputContainer: {
         marginTop: height * 0.04,
@@ -243,16 +247,16 @@ const styles = StyleSheet.create({
         height: height * 0.07,
         width: height * 0.415,
         borderRadius: 10,
-        justifyContent: 'center'
+        justifyContent: 'center',
     },
     textInputContainerBusy: {
-        opacity: 0.5
+        opacity: 0.5,
     },
     textInputField: {
         fontSize: scaleFont(16),
         fontFamily: 'Inter-SemiBold',
         marginLeft: height * 0.018,
-        color: 'white'
+        color: 'white',
     },
     iconContainer: {
         flexDirection: 'row',
@@ -260,29 +264,29 @@ const styles = StyleSheet.create({
         right: height * 0.018,
     },
     volumeIcon: {
-        marginRight: height * 0.023
+        marginRight: height * 0.023,
     },
     missedWordsContainer: {
         height: height * 0.45,
         width: height * 0.415,
         borderRadius: 15,
         backgroundColor: '#333333',
-        marginTop: height * 0.03
+        marginTop: height * 0.03,
     },
     missedWordsDivider: {
         height: height * 0.004,
         width: height * 0.28,
         backgroundColor: 'white',
         alignSelf: 'center',
-        borderRadius: 30
+        borderRadius: 30,
     },
     missedWordsList: {
-        marginTop: height * 0.02
+        marginTop: height * 0.02,
     },
     missedWordItem: {
         alignSelf: 'center',
         fontSize: scaleFont(18),
-        marginTop: height * 0.001
+        marginTop: height * 0.001,
     },
     endButton: {
         height: height * 0.07,
@@ -291,20 +295,20 @@ const styles = StyleSheet.create({
         marginTop: height * 0.03,
         borderRadius: 10,
         alignSelf: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
     },
     endButtonPressed: {
-        opacity: 0.5
+        opacity: 0.5,
     },
     endButtonText: {
         alignSelf: 'center',
-        fontSize: scaleFont(24)
+        fontSize: scaleFont(24),
     },
     title: {
         alignSelf: 'center',
         fontSize: scaleFont(32),
-        marginTop: height * 0.015
-    }
+        marginTop: height * 0.015,
+    },
 });
 
 export default SoloScreen;

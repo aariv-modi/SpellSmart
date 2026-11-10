@@ -1,5 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { View, Modal, StyleSheet, Dimensions, Pressable, TouchableWithoutFeedback, ActivityIndicator } from 'react-native';
+import {
+    View,
+    Modal,
+    StyleSheet,
+    Dimensions,
+    Pressable,
+    TouchableWithoutFeedback,
+    ActivityIndicator,
+} from 'react-native';
 import RecursiveText from './RecursiveText';
 import InterText from './InterText';
 import { scaleFont } from '../utils/responsiveTextSize';
@@ -30,12 +38,7 @@ const DefinitionModal = ({ word, visible, onClose }) => {
     const hasDefs = definitions.length > 0;
 
     return (
-        <Modal
-            animationType="fade"
-            transparent
-            visible={visible}
-            onRequestClose={onClose}
-        >
+        <Modal animationType="fade" transparent visible={visible} onRequestClose={onClose}>
             <TouchableWithoutFeedback onPress={onClose}>
                 <View style={styles.backdrop}>
                     <TouchableWithoutFeedback>
@@ -43,7 +46,11 @@ const DefinitionModal = ({ word, visible, onClose }) => {
                             <RecursiveText text={word ?? ''} style={styles.word} />
 
                             {loading && (
-                                <ActivityIndicator size="small" color="#ffc800" style={styles.loader} />
+                                <ActivityIndicator
+                                    size="small"
+                                    color="#ffc800"
+                                    style={styles.loader}
+                                />
                             )}
 
                             {!loading && hasDefs && (
@@ -51,7 +58,10 @@ const DefinitionModal = ({ word, visible, onClose }) => {
                                     {definitions.map((d, i) => (
                                         <View key={i} style={styles.defItem}>
                                             {d.partOfSpeech && (
-                                                <InterText text={d.partOfSpeech} style={styles.partOfSpeech} />
+                                                <InterText
+                                                    text={d.partOfSpeech}
+                                                    style={styles.partOfSpeech}
+                                                />
                                             )}
                                             <InterText text={d.definition} style={styles.defText} />
                                         </View>
@@ -61,14 +71,21 @@ const DefinitionModal = ({ word, visible, onClose }) => {
 
                             {!loading && !hasDefs && (
                                 <InterText
-                                    text={data === null ? "Couldn't load. Check your connection." : 'No definition found.'}
+                                    text={
+                                        data === null
+                                            ? "Couldn't load. Check your connection."
+                                            : 'No definition found.'
+                                    }
                                     style={styles.emptyText}
                                 />
                             )}
 
                             <Pressable
                                 onPress={onClose}
-                                style={({ pressed }) => [styles.closeButton, pressed && styles.closeButtonPressed]}
+                                style={({ pressed }) => [
+                                    styles.closeButton,
+                                    pressed && styles.closeButtonPressed,
+                                ]}
                             >
                                 <InterText text="Close" style={styles.closeButtonText} />
                             </Pressable>

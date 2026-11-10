@@ -1,34 +1,36 @@
-import React, { useState } from "react";
-import { StyleSheet, Dimensions, Pressable, View, Modal, TextInput, TouchableOpacity, TouchableWithoutFeedback, Alert } from "react-native";
-import { Ionicons } from '@expo/vector-icons'
-import { updateListName, deleteList, getCustomListNames } from './../utils/HelperFunctions'
-import RecursiveText from "./RecursiveText";
-import InterText from "./InterText";
-import { scaleFont } from "../utils/responsiveTextSize";
+import React, { useState } from 'react';
+import {
+    StyleSheet,
+    Dimensions,
+    Pressable,
+    View,
+    Modal,
+    TextInput,
+    TouchableOpacity,
+    TouchableWithoutFeedback,
+    Alert,
+} from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { updateListName, deleteList, getCustomListNames } from './../utils/HelperFunctions';
+import RecursiveText from './RecursiveText';
+import InterText from './InterText';
+import { scaleFont } from '../utils/responsiveTextSize';
 
 const { height } = Dimensions.get('window');
 
 const CardButton = ({ icon, onPress }) => (
-    <Pressable 
-        onPress={onPress} 
-        style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1.0 })}
-    >
-        <Ionicons 
-            name={icon} 
-            size={height * 0.029} 
-            color="white" 
-            style={icon === "create" ? styles.icon : null} 
+    <Pressable onPress={onPress} style={({ pressed }) => ({ opacity: pressed ? 0.5 : 1.0 })}>
+        <Ionicons
+            name={icon}
+            size={height * 0.029}
+            color="white"
+            style={icon === 'create' ? styles.icon : null}
         />
     </Pressable>
 );
 
 const RenameModal = ({ visible, onClose, value, onChange, onSubmit }) => (
-    <Modal
-        animationType="slide"
-        transparent={true}
-        visible={visible}
-        onRequestClose={onClose}
-    >
+    <Modal animationType="slide" transparent={true} visible={visible} onRequestClose={onClose}>
         <TouchableWithoutFeedback onPress={onClose}>
             <View style={styles.modalContainer}>
                 <TouchableWithoutFeedback>
@@ -42,7 +44,7 @@ const RenameModal = ({ visible, onClose, value, onChange, onSubmit }) => (
                             placeholder="Enter new list name"
                             textAlign="center"
                             autoComplete="off"
-                            autoCapitalize='none'
+                            autoCapitalize="none"
                             autoCorrect={false}
                             returnKeyType="done"
                             onSubmitEditing={onSubmit}
@@ -55,12 +57,7 @@ const RenameModal = ({ visible, onClose, value, onChange, onSubmit }) => (
 );
 
 const DeleteModal = ({ visible, onClose, listName, onDelete }) => (
-    <Modal
-        animationType="slide"
-        transparent={true}
-        visible={visible}
-        onRequestClose={onClose}
-    >
+    <Modal animationType="slide" transparent={true} visible={visible} onRequestClose={onClose}>
         <View style={styles.modalContainer}>
             <View style={styles.modalContent}>
                 <RecursiveText text="Delete List" style={styles.modalTitle} />
@@ -69,16 +66,10 @@ const DeleteModal = ({ visible, onClose, listName, onDelete }) => (
                     style={styles.deleteConfirmText}
                 />
                 <View style={styles.modalButtonContainer}>
-                    <TouchableOpacity
-                        style={styles.modalButton}
-                        onPress={onDelete}
-                    >
+                    <TouchableOpacity style={styles.modalButton} onPress={onDelete}>
                         <InterText text="Yes" style={styles.modalButtonText} />
                     </TouchableOpacity>
-                    <TouchableOpacity
-                        style={styles.modalButton}
-                        onPress={onClose}
-                    >
+                    <TouchableOpacity style={styles.modalButton} onPress={onClose}>
                         <InterText text="Cancel" style={styles.modalButtonText} />
                     </TouchableOpacity>
                 </View>
@@ -120,8 +111,8 @@ const ListCard = ({ title, length, onTouch, onListsChanged, style = {} }) => {
 
     return (
         <>
-            <Pressable 
-                onPress={onTouch} 
+            <Pressable
+                onPress={onTouch}
                 style={({ pressed }) => [{ opacity: pressed ? 0.5 : 1.0 }]}
             >
                 <View style={[styles.card, { backgroundColor: '#333333' }, style]}>
@@ -131,13 +122,10 @@ const ListCard = ({ title, length, onTouch, onListsChanged, style = {} }) => {
                             <RecursiveText text={`${length} words`} style={styles.listSubtitle} />
                         </View>
                         <View style={styles.iconContainer}>
-                            <CardButton 
-                                icon="create" 
-                                onPress={openRename} 
-                            />
-                            <CardButton 
-                                icon="trash" 
-                                onPress={() => setIsDeleteModalVisible(true)} 
+                            <CardButton icon="create" onPress={openRename} />
+                            <CardButton
+                                icon="trash"
+                                onPress={() => setIsDeleteModalVisible(true)}
                             />
                         </View>
                     </View>
@@ -178,38 +166,38 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        paddingHorizontal: height * 0.02
+        paddingHorizontal: height * 0.02,
     },
     textContainer: {
-        flexDirection: 'column'
+        flexDirection: 'column',
     },
     listTitle: {
         fontSize: scaleFont(18),
-        marginBottom: height * 0.005
+        marginBottom: height * 0.005,
     },
     listSubtitle: {
         fontSize: scaleFont(12),
-        marginBottom: height * 0.005
+        marginBottom: height * 0.005,
     },
     iconContainer: {
         flexDirection: 'row',
-        alignItems: 'center'
+        alignItems: 'center',
     },
     icon: {
-        marginRight: height * 0.01
+        marginRight: height * 0.01,
     },
     modalContainer: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'rgba(0,0,0,0.5)'
+        backgroundColor: 'rgba(0,0,0,0.5)',
     },
     modalContent: {
         width: height * 0.37,
         height: height * 0.16,
         backgroundColor: '#333333',
         borderRadius: 20,
-        alignItems: 'center'
+        alignItems: 'center',
     },
     modalTitle: {
         fontSize: scaleFont(20),
@@ -222,25 +210,25 @@ const styles = StyleSheet.create({
         color: 'white',
         borderRadius: 10,
         marginTop: height * 0.025,
-        fontSize: scaleFont(16)
+        fontSize: scaleFont(16),
     },
     deleteConfirmText: {
         color: 'white',
         textAlign: 'center',
-        marginBottom: height * 0.023
+        marginBottom: height * 0.023,
     },
     modalButtonContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        width: height * 0.34
+        width: height * 0.34,
     },
     modalButton: {
         backgroundColor: '#ce82ff',
         padding: 10,
         borderRadius: 10,
         width: '45%',
-        alignItems: 'center'
-    }
+        alignItems: 'center',
+    },
 });
 
 export default ListCard;

@@ -35,9 +35,18 @@ section('A. daysBetween');
 section('B. getEffectiveStreak');
 {
     assert('null lastPracticeDate = 0', getEffectiveStreak(FRESH, '2026-05-01') === 0);
-    assert('today = currentDays', getEffectiveStreak({ currentDays: 7, lastPracticeDate: '2026-05-01' }, '2026-05-01') === 7);
-    assert('yesterday = currentDays (still in window)', getEffectiveStreak({ currentDays: 7, lastPracticeDate: '2026-04-30' }, '2026-05-01') === 7);
-    assert('two days ago = 0 (broken)', getEffectiveStreak({ currentDays: 7, lastPracticeDate: '2026-04-29' }, '2026-05-01') === 0);
+    assert(
+        'today = currentDays',
+        getEffectiveStreak({ currentDays: 7, lastPracticeDate: '2026-05-01' }, '2026-05-01') === 7,
+    );
+    assert(
+        'yesterday = currentDays (still in window)',
+        getEffectiveStreak({ currentDays: 7, lastPracticeDate: '2026-04-30' }, '2026-05-01') === 7,
+    );
+    assert(
+        'two days ago = 0 (broken)',
+        getEffectiveStreak({ currentDays: 7, lastPracticeDate: '2026-04-29' }, '2026-05-01') === 0,
+    );
 }
 
 section('C. markLogin — new user');
@@ -84,13 +93,19 @@ section('G. markLogin — long streak still works');
 section('H. getLifetimeAccuracy');
 {
     assert('empty history = null', getLifetimeAccuracy([]) === null);
-    assert('zero attempts = null', getLifetimeAccuracy([{ wordsAttempted: 0, wordsCorrect: 0 }]) === null);
+    assert(
+        'zero attempts = null',
+        getLifetimeAccuracy([{ wordsAttempted: 0, wordsCorrect: 0 }]) === null,
+    );
     assert('100%', getLifetimeAccuracy([{ wordsAttempted: 5, wordsCorrect: 5 }]) === 100);
     assert('80%', getLifetimeAccuracy([{ wordsAttempted: 5, wordsCorrect: 4 }]) === 80);
-    assert('multi-session', getLifetimeAccuracy([
-        { wordsAttempted: 10, wordsCorrect: 8 },
-        { wordsAttempted: 10, wordsCorrect: 9 },
-    ]) === 85);
+    assert(
+        'multi-session',
+        getLifetimeAccuracy([
+            { wordsAttempted: 10, wordsCorrect: 8 },
+            { wordsAttempted: 10, wordsCorrect: 9 },
+        ]) === 85,
+    );
 }
 
 console.log(`\n${passed} passed, ${failed} failed`);

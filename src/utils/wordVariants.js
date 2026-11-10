@@ -3,11 +3,14 @@
 // is the one we pronounce and spell out.
 
 export const spellings = (entry) =>
-  entry.split(',').map((s) => s.trim()).filter(Boolean);
+    entry
+        .split(',')
+        .map((s) => s.trim())
+        .filter(Boolean);
 
 export const primarySpelling = (entry) => spellings(entry)[0] ?? entry;
 
 export const isCorrectSpelling = (input, entry) => {
-  const answer = input.trim().toLowerCase();
-  return spellings(entry).some((s) => s.toLowerCase() === answer);
+    const answer = input.trim().toLowerCase();
+    return spellings(entry).some((s) => s.toLowerCase() === answer);
 };

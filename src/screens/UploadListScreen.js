@@ -1,75 +1,90 @@
-import React, { useState } from 'react'
-import { View, Text, StyleSheet, Dimensions, ScrollView, TouchableOpacity, TextInput, ActivityIndicator, Alert, KeyboardAvoidingView, Platform } from 'react-native'
-import { Ionicons } from '@expo/vector-icons'
-import * as ImagePicker from 'expo-image-picker'
-import TextRecognition from '@react-native-ml-kit/text-recognition'
+import React, { useState } from 'react';
+import {
+    View,
+    Text,
+    StyleSheet,
+    Dimensions,
+    ScrollView,
+    TouchableOpacity,
+    TextInput,
+    ActivityIndicator,
+    Alert,
+    KeyboardAvoidingView,
+    Platform,
+} from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import * as ImagePicker from 'expo-image-picker';
+import TextRecognition from '@react-native-ml-kit/text-recognition';
 
-import RecursiveText from '../components/RecursiveText'
-import { addList, addWord } from '../utils/HelperFunctions'
-import { scaleFont } from '../utils/responsiveTextSize'
+import RecursiveText from '../components/RecursiveText';
+import { addList, addWord } from '../utils/HelperFunctions';
+import { scaleFont } from '../utils/responsiveTextSize';
 
-const { width, height } = Dimensions.get('window')
+const { width, height } = Dimensions.get('window');
 
 const extractWords = (text) =>
     text
         .split(/\s+/)
-        .map(w => w.replace(/^[^a-zA-Z]+|[^a-zA-Z'-]+$/g, ''))
-        .filter(w => w.length > 1)
+        .map((w) => w.replace(/^[^a-zA-Z]+|[^a-zA-Z'-]+$/g, ''))
+        .filter((w) => w.length > 1);
 
 const UploadListScreen = ({ navigation }) => {
-    const [words, setWords] = useState([])
-    const [listName, setListName] = useState('')
-    const [loading, setLoading] = useState(false)
+    const [words, setWords] = useState([]);
+    const [listName, setListName] = useState('');
+    const [loading, setLoading] = useState(false);
 
     const pickAndOCR = async () => {
         const picked = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ['images'],
             allowsEditing: false,
             quality: 1,
-        })
-        if (picked.canceled) return
+        });
+        if (picked.canceled) return;
 
-        setLoading(true)
+        setLoading(true);
         try {
-            const ocr = await TextRecognition.recognize(picked.assets[0].uri)
-            const detected = extractWords(ocr.text)
+            const ocr = await TextRecognition.recognize(picked.assets[0].uri);
+            const detected = extractWords(ocr.text);
             if (detected.length === 0) {
-                Alert.alert('No text detected', 'Try a clearer or closer photo.')
-                return
+                Alert.alert('No text detected', 'Try a clearer or closer photo.');
+                return;
             }
-            setWords(prev => Array.from(new Set([...prev, ...detected])))
+            setWords((prev) => Array.from(new Set([...prev, ...detected])));
         } catch (e) {
-            Alert.alert('OCR failed', e?.message ?? 'Could not read the image.')
+            Alert.alert('OCR failed', e?.message ?? 'Could not read the image.');
         } finally {
-            setLoading(false)
+            setLoading(false);
         }
-    }
+    };
 
-    const removeWord = (word) => setWords(words.filter(w => w !== word))
+    const removeWord = (word) => setWords(words.filter((w) => w !== word));
 
     const saveList = async () => {
-        const name = listName.trim()
+        const name = listName.trim();
         if (!name) {
-            Alert.alert('Please enter a list name.')
-            return
+            Alert.alert('Please enter a list name.');
+            return;
         }
         if (words.length === 0) {
-            Alert.alert('Pick an image with words first.')
-            return
+            Alert.alert('Pick an image with words first.');
+            return;
         }
-        await addList(name)
+        await addList(name);
         for (const word of words) {
-            await addWord(word, name)
+            await addWord(word, name);
         }
-        navigation.navigate('ListDetails', { listName: name })
-    }
+        navigation.navigate('ListDetails', { listName: name });
+    };
 
     return (
         <KeyboardAvoidingView
             style={styles.container}
             behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         >
-            <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
+            <ScrollView
+                contentContainerStyle={styles.scrollContent}
+                keyboardShouldPersistTaps="handled"
+            >
                 <View style={styles.infoCard}>
                     <RecursiveText text="Upload Image" style={styles.infoTitle} />
                     <RecursiveText
@@ -84,19 +99,29 @@ const UploadListScreen = ({ navigation }) => {
                     ) : (
                         <>
                             <Ionicons name="image" size={height * 0.025} color="white" />
-                            <RecursiveText text={words.length === 0 ? 'Pick Image' : 'Add Another Image'} style={styles.pickText} />
+                            <RecursiveText
+                                text={words.length === 0 ? 'Pick Image' : 'Add Another Image'}
+                                style={styles.pickText}
+                            />
                         </>
                     )}
                 </TouchableOpacity>
 
                 {words.length > 0 && (
                     <View style={styles.wordsCard}>
-                        <RecursiveText text={`${words.length} words found`} style={styles.wordsTitle} />
-                        {words.map(word => (
+                        <RecursiveText
+                            text={`${words.length} words found`}
+                            style={styles.wordsTitle}
+                        />
+                        {words.map((word) => (
                             <View key={word} style={styles.wordRow}>
                                 <Text style={styles.word}>{word}</Text>
                                 <TouchableOpacity onPress={() => removeWord(word)} hitSlop={10}>
-                                    <Ionicons name="close-circle" size={height * 0.028} color="#ff6b6b" />
+                                    <Ionicons
+                                        name="close-circle"
+                                        size={height * 0.028}
+                                        color="#ff6b6b"
+                                    />
                                 </TouchableOpacity>
                             </View>
                         ))}
@@ -119,8 +144,8 @@ const UploadListScreen = ({ navigation }) => {
                 )}
             </ScrollView>
         </KeyboardAvoidingView>
-    )
-}
+    );
+};
 
 const styles = StyleSheet.create({
     container: { flex: 1, backgroundColor: '#1a1a1a' },
@@ -189,6 +214,6 @@ const styles = StyleSheet.create({
         marginTop: height * 0.02,
     },
     saveText: { color: 'white', fontSize: scaleFont(18) },
-})
+});
 
-export default UploadListScreen
+export default UploadListScreen;

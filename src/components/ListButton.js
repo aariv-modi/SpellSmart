@@ -1,17 +1,19 @@
-import React from "react"
-import { Dimensions, Pressable, View } from "react-native"
-import InterText from "./InterText";
-import { scaleFont } from "../utils/responsiveTextSize";
+import React from 'react';
+import { Dimensions, Pressable, View } from 'react-native';
+import InterText from './InterText';
+import { scaleFont } from '../utils/responsiveTextSize';
 
 const { height } = Dimensions.get('window');
 
 const ListButton = function ({ title, onPress, numWords }) {
     return (
-        <Pressable 
+        <Pressable
             onPress={onPress}
-            style={({ pressed }) => [{
-                opacity: pressed ? 0.7 : 1
-            }]}
+            style={({ pressed }) => [
+                {
+                    opacity: pressed ? 0.7 : 1,
+                },
+            ]}
         >
             <View
                 style={{
@@ -23,14 +25,20 @@ const ListButton = function ({ title, onPress, numWords }) {
                     marginTop: '5%',
                     alignItems: 'center',
                     flexDirection: 'row',
-                    justifyContent: 'space-between'
+                    justifyContent: 'space-between',
                 }}
             >
-                <InterText text={title} style={{ fontSize: scaleFont(18), marginLeft: height * 0.014 }} />
-                <InterText text={numWords} style={{ fontSize: scaleFont(18), marginRight: height * 0.014 }} />
+                <InterText
+                    text={title}
+                    style={{ fontSize: scaleFont(18), marginLeft: height * 0.014 }}
+                />
+                <InterText
+                    text={numWords}
+                    style={{ fontSize: scaleFont(18), marginRight: height * 0.014 }}
+                />
             </View>
         </Pressable>
-    )
-}
+    );
+};
 
-export default ListButton
+export default ListButton;

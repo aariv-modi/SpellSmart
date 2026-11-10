@@ -1,29 +1,38 @@
-import React, { useState, useEffect, useCallback } from "react"
+import React, { useState, useEffect, useCallback } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
-import { View, StyleSheet, Dimensions, Modal, TouchableOpacity, Animated, TouchableWithoutFeedback } from "react-native"
-import { getBookmarkedWords, getCustomLists, getMissedWords } from "../utils/HelperFunctions"
-import ListTypeCard from "../components/ListTypeCard"
-import { scaleFont } from "../utils/responsiveTextSize"
-import InterText from "../components/InterText"
+import {
+    View,
+    StyleSheet,
+    Dimensions,
+    Modal,
+    TouchableOpacity,
+    Animated,
+    TouchableWithoutFeedback,
+} from 'react-native';
+import { getBookmarkedWords, getCustomLists, getMissedWords } from '../utils/HelperFunctions';
+import ListTypeCard from '../components/ListTypeCard';
+import { scaleFont } from '../utils/responsiveTextSize';
+import InterText from '../components/InterText';
 
-const paintbrush = require('../../assets/images/paintbrush.png')
-const uil = require('../../assets/images/uil.png')
-const book = require('../../assets/images/book.png')
-const flex = require('../../assets/images/flex.png')
+const paintbrush = require('../../assets/images/paintbrush.png');
+const uil = require('../../assets/images/uil.png');
+const book = require('../../assets/images/book.png');
+const flex = require('../../assets/images/flex.png');
 
 const colors = {
     primary: {
-        main: '#58cc02'
+        main: '#58cc02',
     },
     neutral: {
         offWhite: '#F5F5F5',
         darkGray: '#424242',
-    }
-}
+    },
+};
 
-const UILDescription = 'These lists are made for UIL competitors, but are fantastic for anyone to practice with!'
-const customDescription = 'Here you can play any lists you\'ve created in the past!';
-const bookmarksDescription = 'Review over all the words you\'ve previously bookmarked!';
+const UILDescription =
+    'These lists are made for UIL competitors, but are fantastic for anyone to practice with!';
+const customDescription = "Here you can play any lists you've created in the past!";
+const bookmarksDescription = "Review over all the words you've previously bookmarked!";
 const missedWordsDescription = 'Practice words that you struggled with earlier!';
 
 const { width, height } = Dimensions.get('window');
@@ -81,7 +90,7 @@ const ListTypeScreen = function ({ navigation }) {
     useFocusEffect(
         useCallback(() => {
             checkAvailableLists();
-        }, [])
+        }, []),
     );
 
     const showWarningMessage = (message) => {
@@ -94,40 +103,46 @@ const ListTypeScreen = function ({ navigation }) {
             showWarningMessage("You haven't made any custom lists yet!");
             return;
         }
-        navigation.navigate("ListSelection", { listType: 'Custom' });
-    }
+        navigation.navigate('ListSelection', { listType: 'Custom' });
+    };
 
     const handleBookmarksPress = async () => {
         if (!hasBookmarks) {
             showWarningMessage("You haven't bookmarked any words yet!");
             return;
         }
-        navigation.navigate("ModeSelection", { listName: 'Bookmarks', list: await getBookmarkedWords() });
-    }
+        navigation.navigate('ModeSelection', {
+            listName: 'Bookmarks',
+            list: await getBookmarkedWords(),
+        });
+    };
 
     const handleMissedWordsPress = async () => {
         if (!hasMissedWords) {
             showWarningMessage("You haven't missed any words yet!");
             return;
         }
-        navigation.navigate("ModeSelection", { listName: 'Missed Words', list: await getMissedWords() });
-    }
+        navigation.navigate('ModeSelection', {
+            listName: 'Missed Words',
+            list: await getMissedWords(),
+        });
+    };
 
     const handleUILPress = () => {
         setModalVisible(true);
-    }
+    };
 
     const handleGradeSelect = (grade) => {
-        navigation.navigate("ListSelection", {
+        navigation.navigate('ListSelection', {
             listType: 'UIL',
-            gradeLevel: grade
+            gradeLevel: grade,
         });
         setModalVisible(false);
-    }
+    };
 
     const handleModalClose = () => {
         setModalVisible(false);
-    }
+    };
 
     return (
         <View style={styles.container}>
@@ -139,7 +154,7 @@ const ListTypeScreen = function ({ navigation }) {
 
             <View style={styles.firstCardRow}>
                 <ListTypeCard
-                    title='UIL'
+                    title="UIL"
                     image={uil}
                     aspectRatio={1040 / 756}
                     description={UILDescription}
@@ -148,7 +163,7 @@ const ListTypeScreen = function ({ navigation }) {
                     disabled={false}
                 />
                 <ListTypeCard
-                    title='CUSTOM'
+                    title="CUSTOM"
                     image={paintbrush}
                     aspectRatio={379 / 357}
                     description={customDescription}
@@ -159,7 +174,7 @@ const ListTypeScreen = function ({ navigation }) {
             </View>
             <View style={styles.secondCardRow}>
                 <ListTypeCard
-                    title='BOOKMARKS'
+                    title="BOOKMARKS"
                     image={book}
                     aspectRatio={374 / 296}
                     description={bookmarksDescription}
@@ -168,7 +183,7 @@ const ListTypeScreen = function ({ navigation }) {
                     disabled={!hasBookmarks}
                 />
                 <ListTypeCard
-                    title='MISSED WORDS'
+                    title="MISSED WORDS"
                     image={flex}
                     aspectRatio={387 / 355}
                     description={missedWordsDescription}
@@ -188,7 +203,10 @@ const ListTypeScreen = function ({ navigation }) {
                     <View style={styles.modalContainer}>
                         <TouchableWithoutFeedback>
                             <View style={styles.modalContent}>
-                                <InterText text="Select Your Grade Level" style={styles.modalTitle} />
+                                <InterText
+                                    text="Select Your Grade Level"
+                                    style={styles.modalTitle}
+                                />
                                 <View style={styles.gradeButtonContainer}>
                                     {['3rd-4th', '5th-6th', '7th-8th'].map((grade) => (
                                         <TouchableOpacity
@@ -196,7 +214,10 @@ const ListTypeScreen = function ({ navigation }) {
                                             style={[styles.gradeButton]}
                                             onPress={() => handleGradeSelect(grade)}
                                         >
-                                            <InterText text={grade} style={styles.gradeButtonText} />
+                                            <InterText
+                                                text={grade}
+                                                style={styles.gradeButtonText}
+                                            />
                                         </TouchableOpacity>
                                     ))}
                                 </View>
@@ -207,7 +228,7 @@ const ListTypeScreen = function ({ navigation }) {
             </Modal>
         </View>
     );
-}
+};
 
 const styles = StyleSheet.create({
     container: {
@@ -221,21 +242,21 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         height: 0.3 * height,
         justifyContent: 'center',
-        gap: height * 0.015
+        gap: height * 0.015,
     },
     secondCardRow: {
         flexDirection: 'row',
         height: 0.3 * height,
         justifyContent: 'center',
         marginTop: height * 0.01,
-        gap: height * 0.015
+        gap: height * 0.015,
     },
     modalContainer: {
         height: height,
         width: width,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'rgba(0,0,0,0.5)'
+        backgroundColor: 'rgba(0,0,0,0.5)',
     },
     modalContent: {
         width: 0.37 * height,
@@ -243,26 +264,26 @@ const styles = StyleSheet.create({
         backgroundColor: '#333333',
         borderRadius: 20,
         alignItems: 'center',
-        shadowColor: "#000",
+        shadowColor: '#000',
         shadowOffset: {
             width: 0,
-            height: 2
+            height: 2,
         },
         shadowOpacity: 0.25,
         shadowRadius: 4,
-        elevation: 5
+        elevation: 5,
     },
     modalTitle: {
         fontSize: scaleFont(20),
         fontWeight: 'bold',
         color: 'white',
-        marginTop: height * 0.02
+        marginTop: height * 0.02,
     },
     gradeButtonContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         width: height * 0.34,
-        marginTop: height * 0.02
+        marginTop: height * 0.02,
     },
     gradeButton: {
         backgroundColor: colors.primary.main,
@@ -270,11 +291,11 @@ const styles = StyleSheet.create({
         width: height * 0.1,
         justifyContent: 'center',
         height: height * 0.04,
-        alignItems: 'center'
+        alignItems: 'center',
     },
     gradeButtonText: {
         color: 'white',
-        fontSize: scaleFont(14)
+        fontSize: scaleFont(14),
     },
     warningContainer: {
         position: 'absolute',
@@ -287,12 +308,12 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         borderColor: '#FFA726',
-        borderWidth: 2
+        borderWidth: 2,
     },
     warningText: {
         fontSize: scaleFont(14),
-        color: colors.neutral.darkGray
-    }
+        color: colors.neutral.darkGray,
+    },
 });
 
-export default ListTypeScreen
+export default ListTypeScreen;

@@ -1,11 +1,6 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { migrateUserData } from "./migrateUserData.mjs";
-import {
-    todayString,
-    markLogin,
-    getEffectiveStreak,
-    getLifetimeAccuracy,
-} from "./streakLogic.mjs";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { migrateUserData } from './migrateUserData.mjs';
+import { todayString, markLogin, getEffectiveStreak, getLifetimeAccuracy } from './streakLogic.mjs';
 
 export { migrateUserData };
 

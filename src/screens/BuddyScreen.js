@@ -1,38 +1,38 @@
-import React, { useState, useEffect, useRef } from "react";
-import { View, StyleSheet, Dimensions, Pressable } from "react-native";
+import React, { useState, useEffect, useRef } from 'react';
+import { View, StyleSheet, Dimensions, Pressable } from 'react-native';
 
 import { Ionicons } from '@expo/vector-icons';
-import { scaleFont } from "../utils/responsiveTextSize";
-import { getBookmarkedWords } from "../utils/HelperFunctions";
-import { endSession } from "../utils/userData";
-import { speakWord, stopSpeak } from "../utils/speak";
-import { feedbackCorrect, feedbackIncorrect } from "../utils/sfx";
+import { scaleFont } from '../utils/responsiveTextSize';
+import { getBookmarkedWords } from '../utils/HelperFunctions';
+import { endSession } from '../utils/userData';
+import { speakWord, stopSpeak } from '../utils/speak';
+import { feedbackCorrect, feedbackIncorrect } from '../utils/sfx';
 
 import ProgressBar from '../components/ProgressBar';
-import RecursiveText from "../components/RecursiveText";
-import BuddyCard from "../components/BuddyCard";
+import RecursiveText from '../components/RecursiveText';
+import BuddyCard from '../components/BuddyCard';
 import FeedbackOverlay from '../components/FeedbackOverlay';
 import DefinitionModal from '../components/DefinitionModal';
 
 const { height } = Dimensions.get('window');
 
 const BuddyScreen = ({ navigation, route }) => {
-    const { list, listName } = route.params
-    const words = useRef(list)
-    const missedWords = useRef([])
-    const startTime = useRef(Date.now())
-    const [wordCounter, setWordCounter] = useState(0)
-    const [bookmarked, setBookmarked] = useState(false)
-    const [bookmarkedWords, setBookmarkedWords] = useState([])
-    const feedbackTick = useRef(0)
-    const [feedback, setFeedback] = useState({ type: null, tick: 0 })
-    const busy = useRef(false)
-    const [definitionVisible, setDefinitionVisible] = useState(false)
+    const { list, listName } = route.params;
+    const words = useRef(list);
+    const missedWords = useRef([]);
+    const startTime = useRef(Date.now());
+    const [wordCounter, setWordCounter] = useState(0);
+    const [bookmarked, setBookmarked] = useState(false);
+    const [bookmarkedWords, setBookmarkedWords] = useState([]);
+    const feedbackTick = useRef(0);
+    const [feedback, setFeedback] = useState({ type: null, tick: 0 });
+    const busy = useRef(false);
+    const [definitionVisible, setDefinitionVisible] = useState(false);
 
-    const showFeedback = (type) => setFeedback({ type, tick: ++feedbackTick.current })
-    const clearFeedback = () => setFeedback((prev) => ({ type: null, tick: prev.tick }))
+    const showFeedback = (type) => setFeedback({ type, tick: ++feedbackTick.current });
+    const clearFeedback = () => setFeedback((prev) => ({ type: null, tick: prev.tick }));
 
-    const getCurrentWord = () => words.current[wordCounter]
+    const getCurrentWord = () => words.current[wordCounter];
 
     const runAudio = async (audioPromise) => {
         busy.current = true;
@@ -66,7 +66,13 @@ const BuddyScreen = ({ navigation, route }) => {
                 { name: 'HomeMain' },
                 {
                     name: 'EndSession',
-                    params: { wordsAttempted, wordsCorrect, missedFromSession, listName, mode: 'Buddy' },
+                    params: {
+                        wordsAttempted,
+                        wordsCorrect,
+                        missedFromSession,
+                        listName,
+                        mode: 'Buddy',
+                    },
                 },
             ],
         });
@@ -75,9 +81,9 @@ const BuddyScreen = ({ navigation, route }) => {
     const toggleBookmark = () => {
         if (busy.current) return;
         const currentWord = getCurrentWord();
-        setBookmarkedWords(prev => {
+        setBookmarkedWords((prev) => {
             if (bookmarked) {
-                return prev.filter(word => word !== currentWord);
+                return prev.filter((word) => word !== currentWord);
             }
             return [...prev, currentWord];
         });
@@ -121,7 +127,7 @@ const BuddyScreen = ({ navigation, route }) => {
                 setBookmarked(bookedWords.includes(getCurrentWord()));
                 runAudio(speakWord(getCurrentWord()));
             } catch (error) {
-                console.error("Initialization error:", error);
+                console.error('Initialization error:', error);
             }
         };
 
@@ -162,7 +168,7 @@ const BuddyScreen = ({ navigation, route }) => {
                         }}
                     />
                     <Ionicons
-                        name={bookmarked ? "star" : "star-outline"}
+                        name={bookmarked ? 'star' : 'star-outline'}
                         size={height * 0.04}
                         color="#ffc800"
                         onPress={toggleBookmark}
@@ -207,7 +213,7 @@ const BuddyScreen = ({ navigation, route }) => {
                     color="#1cb0f6"
                     onTouch={() => {
                         if (busy.current) return;
-                        navigation.navigate("MissedWords", { incorrectWords: missedWords.current });
+                        navigation.navigate('MissedWords', { incorrectWords: missedWords.current });
                     }}
                 />
             </View>
@@ -230,16 +236,16 @@ const styles = StyleSheet.create({
         height: height * 0.82,
         backgroundColor: '#1a1a1a',
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
     },
     progressContainer: {
         flexDirection: 'row',
         alignItems: 'center',
         width: height * 0.405,
-        justifyContent: 'space-between'
+        justifyContent: 'space-between',
     },
     progressText: {
-        fontSize: scaleFont(24)
+        fontSize: scaleFont(24),
     },
     wordContainer: {
         height: height * 0.1,
@@ -247,20 +253,20 @@ const styles = StyleSheet.create({
         marginTop: height * 0.02,
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'space-between'
+        justifyContent: 'space-between',
     },
     wordText: {
         flex: 1,
         marginRight: height * 0.015,
-        fontSize: scaleFont(40)
+        fontSize: scaleFont(40),
     },
     bookmarkContainer: {
         flexDirection: 'row',
-        alignItems: 'center'
+        alignItems: 'center',
     },
     definitionIcon: {
         marginRight: height * 0.018,
-        marginTop: height * 0.005
+        marginTop: height * 0.005,
     },
     buddyCardContainer: {
         flexDirection: 'row',
@@ -274,7 +280,7 @@ const styles = StyleSheet.create({
         height: height * 0.185,
         width: height * 0.44,
         justifyContent: 'space-evenly',
-        marginTop: height * 0.02
+        marginTop: height * 0.02,
     },
     endButton: {
         height: height * 0.07,
@@ -283,15 +289,15 @@ const styles = StyleSheet.create({
         marginTop: height * 0.04,
         borderRadius: 10,
         alignSelf: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
     },
     endButtonPressed: {
-        opacity: 0.5
+        opacity: 0.5,
     },
     endButtonText: {
         alignSelf: 'center',
-        fontSize: scaleFont(24)
-    }
+        fontSize: scaleFont(24),
+    },
 });
 
 export default BuddyScreen;

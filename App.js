@@ -23,90 +23,80 @@ void SplashScreen.preventAutoHideAsync();
 const Stack = createStackNavigator();
 
 const MainNavigator = ({ newUser, onIntroComplete }) => {
-	return (
-		<Stack.Navigator
-			screenOptions={{
-				headerShown: false
-			}}
-			initialRouteName={newUser ? 'Intro' : 'Main'}
-		>
-			{newUser ? (
-				<Stack.Screen name="Intro">
-					{(props) => (
-						<IntroScreens
-							{...props}
-							onIntroComplete={onIntroComplete}
-						/>
-					)}
-				</Stack.Screen>
-			) : (
-				<Stack.Screen
-					name="Main"
-					component={BottomBar}
-				/>
-			)}
-		</Stack.Navigator>
-	);
+    return (
+        <Stack.Navigator
+            screenOptions={{
+                headerShown: false,
+            }}
+            initialRouteName={newUser ? 'Intro' : 'Main'}
+        >
+            {newUser ? (
+                <Stack.Screen name="Intro">
+                    {(props) => <IntroScreens {...props} onIntroComplete={onIntroComplete} />}
+                </Stack.Screen>
+            ) : (
+                <Stack.Screen name="Main" component={BottomBar} />
+            )}
+        </Stack.Navigator>
+    );
 };
 
 export default function App() {
-	const [appIsReady, setAppIsReady] = useState(false);
-	const [showCustomSplash, setShowCustomSplash] = useState(true);
-	const [newUser, setNewUser] = useState(null);
+    const [appIsReady, setAppIsReady] = useState(false);
+    const [showCustomSplash, setShowCustomSplash] = useState(true);
+    const [newUser, setNewUser] = useState(null);
 
-	useEffect(() => {
-		const prepare = async () => {
-			try {
-				const isNewUser = await checkNewUser();
-				setNewUser(isNewUser);
+    useEffect(() => {
+        const prepare = async () => {
+            try {
+                const isNewUser = await checkNewUser();
+                setNewUser(isNewUser);
 
-				if (!isNewUser) {
-					const userData = await loadUserData();
-					userData.numSessions++;
-					await saveUserData(userData);
-					await markLoginToday();
+                if (!isNewUser) {
+                    const userData = await loadUserData();
+                    userData.numSessions++;
+                    await saveUserData(userData);
+                    await markLoginToday();
 
-					if (Platform.OS !== 'web' && userData.settings.reminderEnabled) {
-						const fresh = await loadUserData();
-						const streakDays = getEffectiveStreak(fresh.streak, todayString());
-						const { hour, minute } = parseReminderTime(fresh.settings.reminderTime);
-						await scheduleDailyReminder(streakDays, hour, minute).catch(() => {});
-					}
-				}
+                    if (Platform.OS !== 'web' && userData.settings.reminderEnabled) {
+                        const fresh = await loadUserData();
+                        const streakDays = getEffectiveStreak(fresh.streak, todayString());
+                        const { hour, minute } = parseReminderTime(fresh.settings.reminderTime);
+                        await scheduleDailyReminder(streakDays, hour, minute).catch(() => {});
+                    }
+                }
 
-				await loadFontsAndAssets();
+                await loadFontsAndAssets();
 
-				setAppIsReady(true);
-				await SplashScreen.hideAsync();
-			} catch (error) {
-				console.warn(error);
-			}
-		};
+                setAppIsReady(true);
+                await SplashScreen.hideAsync();
+            } catch (error) {
+                console.warn(error);
+            }
+        };
 
-		prepare();
-	}, []);
+        prepare();
+    }, []);
 
-	const handleIntroComplete = useCallback(async () => {
-		await saveUserData(defaultUserData);
-		setNewUser(false);
-	}, []);
+    const handleIntroComplete = useCallback(async () => {
+        await saveUserData(defaultUserData);
+        setNewUser(false);
+    }, []);
 
-	const handleCustomSplashComplete = () => {
-		setShowCustomSplash(false);
-	};
+    const handleCustomSplashComplete = () => {
+        setShowCustomSplash(false);
+    };
 
-	if (!appIsReady || newUser === null) {
-		return null;
-	}
+    if (!appIsReady || newUser === null) {
+        return null;
+    }
 
-	return (
-		<>
-			<NavigationContainer>
-				<MainNavigator newUser={newUser} onIntroComplete={handleIntroComplete} />
-			</NavigationContainer>
-			{showCustomSplash && (
-				<CustomSplashScreen onComplete={handleCustomSplashComplete} />
-			)}
-		</>
-	);
+    return (
+        <>
+            <NavigationContainer>
+                <MainNavigator newUser={newUser} onIntroComplete={handleIntroComplete} />
+            </NavigationContainer>
+            {showCustomSplash && <CustomSplashScreen onComplete={handleCustomSplashComplete} />}
+        </>
+    );
 }

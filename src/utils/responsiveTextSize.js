@@ -19,4 +19,4 @@ export function scaleFont(fontSize) {
 
     // If the device is iOS, return the adjusted font size
     return adjustedFontSize;
-};
+}

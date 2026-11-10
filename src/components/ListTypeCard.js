@@ -1,12 +1,20 @@
-import React from "react";
-import { StyleSheet, Image, Dimensions, Pressable, View } from "react-native";
-import RecursiveText from "./RecursiveText";
-import InterText from "./InterText";
-import { scaleFont } from "../utils/responsiveTextSize";
+import React from 'react';
+import { StyleSheet, Image, Dimensions, Pressable, View } from 'react-native';
+import RecursiveText from './RecursiveText';
+import InterText from './InterText';
+import { scaleFont } from '../utils/responsiveTextSize';
 
 const { height } = Dimensions.get('window');
 
-const ListTypeCard = function ({ title, image, aspectRatio, description, onTouch, disabled = false, style = {} }) {
+const ListTypeCard = function ({
+    title,
+    image,
+    aspectRatio,
+    description,
+    onTouch,
+    disabled = false,
+    style = {},
+}) {
     const handlePress = () => {
         // Always call onTouch, let the parent component handle the disabled state
         onTouch();
@@ -18,7 +26,7 @@ const ListTypeCard = function ({ title, image, aspectRatio, description, onTouch
                 style={[
                     styles.card,
                     { backgroundColor: '#333333', opacity: disabled ? 0.5 : 1 },
-                    style
+                    style,
                 ]}
             >
                 <Image
@@ -26,22 +34,13 @@ const ListTypeCard = function ({ title, image, aspectRatio, description, onTouch
                     style={[
                         styles.image,
                         { aspectRatio: aspectRatio, width: height * 0.08 * aspectRatio },
-                        disabled && { opacity: 0.5 }
+                        disabled && { opacity: 0.5 },
                     ]}
                 />
-                <RecursiveText
-                    text={title}
-                    style={[
-                        styles.title,
-                        disabled && { opacity: 0.5 }
-                    ]}
-                />
+                <RecursiveText text={title} style={[styles.title, disabled && { opacity: 0.5 }]} />
                 <InterText
                     text={description}
-                    style={[
-                        styles.description,
-                        disabled && { opacity: 0.5 }
-                    ]}
+                    style={[styles.description, disabled && { opacity: 0.5 }]}
                 />
             </View>
         </Pressable>
@@ -58,13 +57,13 @@ const styles = StyleSheet.create({
     image: {
         height: height * 0.08,
         marginTop: height * 0.03,
-        alignSelf: 'center'
+        alignSelf: 'center',
     },
     title: {
         alignSelf: 'center',
         fontSize: scaleFont(18),
         marginTop: height * 0.03,
-        color: '#ffc800'
+        color: '#ffc800',
     },
     description: {
         alignSelf: 'center',
@@ -72,8 +71,8 @@ const styles = StyleSheet.create({
         marginTop: height * 0.025,
         width: height * 0.18,
         fontSize: scaleFont(13),
-        color: 'white'
-    }
+        color: 'white',
+    },
 });
 
 export default ListTypeCard;

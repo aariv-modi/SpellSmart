@@ -21,7 +21,9 @@ const play = (player) =>
             if (settled) return;
             settled = true;
             clearTimeout(safety);
-            try { listener?.remove(); } catch {}
+            try {
+                listener?.remove();
+            } catch {}
             resolve();
         };
 

@@ -14,14 +14,14 @@ const { width, height } = Dimensions.get('window');
 
 const IntroScreens = ({ onIntroComplete }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
-    const swiperRef = useRef(null);  // Create a ref for the Swiper
+    const swiperRef = useRef(null); // Create a ref for the Swiper
 
     const introPages = [
         {
             title1: 'WELCOME TO',
             title2: 'SPELLSMART!',
             title3: '',
-            description: 'We\'re excited to have you here!',
+            description: "We're excited to have you here!",
             backgroundColor: '#1a1a1a',
             image: logo,
             imageAspectRatio: 512 / 512,
@@ -31,7 +31,8 @@ const IntroScreens = ({ onIntroComplete }) => {
             title1: 'LEARN SPELLING',
             title2: 'YOUR WAY',
             title3: '',
-            description: 'You can fly solo or have a friend help you out, whichever is best for you!',
+            description:
+                'You can fly solo or have a friend help you out, whichever is best for you!',
             backgroundColor: '#1a1a1a',
             image: modes,
             imageAspectRatio: 809 / 308,
@@ -41,7 +42,8 @@ const IntroScreens = ({ onIntroComplete }) => {
             title1: 'LOCK IN FOR',
             title2: 'UIL SPELLING',
             title3: '',
-            description: 'UIL is one of the most prestigious spelling competitions in Texas and a great way to test your spelling skills!',
+            description:
+                'UIL is one of the most prestigious spelling competitions in Texas and a great way to test your spelling skills!',
             backgroundColor: '#1a1a1a',
             image: uil,
             imageAspectRatio: 1040 / 756,
@@ -65,13 +67,29 @@ const IntroScreens = ({ onIntroComplete }) => {
 
     const renderPage = (page, index) => (
         <View key={index} style={[styles.page, { backgroundColor: page.backgroundColor }]}>
-            <View style={{ height: height * 0.3, marginTop: 0.12 * height, justifyContent: 'center', alignItems: 'center' }}>
-                <Image source={page.image} style={{ aspectRatio: page.imageAspectRatio, height: page.imageHeight, width: page.imageHeight * page.imageAspectRatio }} />
+            <View
+                style={{
+                    height: height * 0.3,
+                    marginTop: 0.12 * height,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                }}
+            >
+                <Image
+                    source={page.image}
+                    style={{
+                        aspectRatio: page.imageAspectRatio,
+                        height: page.imageHeight,
+                        width: page.imageHeight * page.imageAspectRatio,
+                    }}
+                />
             </View>
             <View style={{ height: 0.2 * height, justifyContent: 'center', alignItems: 'center' }}>
                 <RecursiveText text={page.title1} style={{ fontSize: scaleFont(42) }} />
                 <RecursiveText text={page.title2} style={{ fontSize: scaleFont(42) }} />
-                {page.title3 ? <RecursiveText text={page.title3} style={{ fontSize: scaleFont(42) }} /> : null}
+                {page.title3 ? (
+                    <RecursiveText text={page.title3} style={{ fontSize: scaleFont(42) }} />
+                ) : null}
             </View>
             <InterText style={styles.description} text={page.description} />
         </View>
@@ -104,35 +122,43 @@ const IntroScreens = ({ onIntroComplete }) => {
                                 style={[
                                     styles.paginationDot,
                                     styles.webDot,
-                                    { backgroundColor: i === currentIndex ? '#58cc02' : 'rgba(255,255,255,0.3)' },
+                                    {
+                                        backgroundColor:
+                                            i === currentIndex
+                                                ? '#58cc02'
+                                                : 'rgba(255,255,255,0.3)',
+                                    },
                                 ]}
                             />
                         ))}
                     </View>
                 </View>
             ) : (
-            <Swiper
-                ref={swiperRef}  // Add ref to the Swiper
-                loop={false}
-                onIndexChanged={handleSwipeIndexChanged}
-                showsPagination={true}
-                dotColor="rgba(255,255,255,0.3)"
-                activeDotColor="#58cc02"
-                dotStyle={styles.paginationDot}
-                activeDotStyle={styles.paginationDot}
-                paginationStyle={styles.pagination}
-            >
-                {introPages.map(renderPage)}
-            </Swiper>
+                <Swiper
+                    ref={swiperRef} // Add ref to the Swiper
+                    loop={false}
+                    onIndexChanged={handleSwipeIndexChanged}
+                    showsPagination={true}
+                    dotColor="rgba(255,255,255,0.3)"
+                    activeDotColor="#58cc02"
+                    dotStyle={styles.paginationDot}
+                    activeDotStyle={styles.paginationDot}
+                    paginationStyle={styles.pagination}
+                >
+                    {introPages.map(renderPage)}
+                </Swiper>
             )}
 
             {/* Bottom navigation bar */}
             <View style={styles.bottomBar}>
-                <Pressable onPress={handleNext} style={({ pressed }) => [{ opacity: pressed ? 0.5 : 1.0 }]}>
+                <Pressable
+                    onPress={handleNext}
+                    style={({ pressed }) => [{ opacity: pressed ? 0.5 : 1.0 }]}
+                >
                     <View style={styles.bottomButton}>
                         <InterText
                             style={{ alignSelf: 'center', fontSize: scaleFont(18) }}
-                            text={currentIndex === introPages.length - 1 ? 'Let\'s Go!' : 'Next'}
+                            text={currentIndex === introPages.length - 1 ? "Let's Go!" : 'Next'}
                         />
                     </View>
                 </Pressable>
@@ -159,7 +185,7 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         marginTop: height * 0.04,
         paddingHorizontal: 20,
-        width: height * 0.461
+        width: height * 0.461,
     },
     pagination: {
         bottom: height * 0.176,
@@ -193,7 +219,7 @@ const styles = StyleSheet.create({
         borderRadius: 25,
         height: height * 0.07,
         width: width * 0.9,
-        justifyContent: 'center'
+        justifyContent: 'center',
     },
 });
 
