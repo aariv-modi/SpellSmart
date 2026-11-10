@@ -127,6 +127,8 @@ const BuddyScreen = ({ navigation, route }) => {
 
         initializeScreen();
         return stopSpeak;
+        // Speak the first word once on mount; later words are spoken by the answer handlers.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return (

@@ -47,6 +47,8 @@ const WarningNotification = ({ message, visible, onHide }) => {
                 }),
             ]).start(() => onHide());
         }
+        // Animate only when the warning is shown; onHide is a new function every render.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [visible]);
 
     if (!visible) return null;

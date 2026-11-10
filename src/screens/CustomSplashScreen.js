@@ -60,6 +60,8 @@ const CustomSplashScreen = ({ onComplete }) => {
 		]).start(() => {
 			onComplete?.();
 		});
+		// The splash animation runs once on launch.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	return (

@@ -7,7 +7,11 @@
     "web": "expo start --web",
     "generate-audio": "node scripts/generate-audio.mjs",
     "publish-content": "node scripts/publish-content.mjs",
-    "deploy-web": "expo export --platform web --clear && cd worker && npx wrangler pages deploy ../dist --project-name spellsmart --branch main"
+    "deploy-web": "expo export --platform web --clear && cd worker && npx wrangler pages deploy ../dist --project-name spellsmart --branch main",
+    "lint": "eslint .",
+    "format": "prettier --write \"**/*.{js,mjs}\"",
+    "format:check": "prettier --check \"**/*.{js,mjs}\"",
+    "test": "node scripts/test-streak.mjs && node scripts/test-migration.mjs"
   },
   "dependencies": {
     "@expo/metro-runtime": "~6.1.2",
@@ -48,6 +52,10 @@
   "devDependencies": {
     "@aws-sdk/client-s3": "^3.1040.0",
     "@google-cloud/text-to-speech": "^6.4.0",
-    "dotenv": "^17.4.2"
+    "dotenv": "^17.4.2",
+    "eslint": "^9.39.5",
+    "eslint-config-expo": "~10.0.0",
+    "eslint-config-prettier": "^10.1.8",
+    "prettier": "^3.9.10"
   }
 }

@@ -41,6 +41,8 @@ const FeedbackOverlay = ({ type, tick, onDone }) => {
         ]).start(({ finished }) => {
             if (finished) onDone?.();
         });
+        // Replay only on a new answer; onDone is recreated every render and would retrigger it.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [type, tick]);
 
     if (!type) return null;

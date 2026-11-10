@@ -23,6 +23,8 @@ const Particle = ({ index }) => {
             delay: index * 25,
             useNativeDriver: true,
         }).start();
+        // Each particle animates once when it mounts.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return (

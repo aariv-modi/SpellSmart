@@ -111,7 +111,7 @@ export const addListWithWords = async (listName, words) => {
 
 export const checkNewUser = async () => {
     const keys = await AsyncStorage.getAllKeys()
-    if (keys.length == 0) {
+    if (keys.length === 0) {
         return true
     }
     return false
