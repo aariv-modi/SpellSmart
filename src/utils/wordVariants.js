@@ -10,10 +10,16 @@ export const spellings = (entry) =>
 
 export const primarySpelling = (entry) => spellings(entry)[0] ?? entry;
 
-// Compare answers by letters, not by how the keyboard encoded them: iOS turns ' into ’
-// ("Smart Punctuation"), and an accented letter can arrive as one character or two.
+// UIL scoring: capitalization counts, accents don't. Accents are removed by splitting each
+// accented letter into letter + mark (NFD) and dropping the marks. iOS also turns ' into ’
+// ("Smart Punctuation"), so both apostrophes count.
 const normalizeAnswer = (text) =>
-    text.normalize('NFC').replace(/[‘’ʼ]/g, "'").replace(/\s+/g, ' ').trim().toLowerCase();
+    text
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[\u2018\u2019\u02bc]/g, "'")
+        .replace(/\s+/g, ' ')
+        .trim();
 
 export const isCorrectSpelling = (input, entry) => {
     const answer = normalizeAnswer(input);

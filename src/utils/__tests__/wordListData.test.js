@@ -1,7 +1,7 @@
 import fifthSixth from '../../../data/lists/fifthSixth.json';
 import seventhEighth from '../../../data/lists/seventhEighth.json';
 import thirdFourth from '../../../data/lists/thirdFourth.json';
-import { spellings } from '../wordVariants';
+import { isCorrectSpelling, spellings } from '../wordVariants';
 
 // The lists are extracted from UIL's PDFs each year; these checks catch extraction
 // mistakes like page-footer text glued onto a word or a word split across lines.
@@ -27,6 +27,13 @@ describe.each(Object.entries(LISTS))('%s', (name, list) => {
             (entry) => entry.includes(',') && entry !== spellings(entry).join(', '),
         );
         expect(bad).toEqual([]);
+    });
+
+    test('every spelling is accepted when typed exactly as listed', () => {
+        const rejected = list.filter((entry) =>
+            spellings(entry).some((s) => !isCorrectSpelling(s, entry)),
+        );
+        expect(rejected).toEqual([]);
     });
 
     test('text is stored in composed Unicode form', () => {

@@ -42,9 +42,19 @@ describe('isCorrectSpelling', () => {
         expect(isCorrectSpelling('vapor, vapour', 'vapor, vapour')).toBe(false);
     });
 
-    test('ignores capitalization', () => {
-        expect(isCorrectSpelling('germany', 'Germany')).toBe(true);
-        expect(isCorrectSpelling('OKAY', 'OK, okay')).toBe(true);
+    // UIL counts a capitalization mistake as a miss.
+    test('requires matching capitalization', () => {
+        expect(isCorrectSpelling('Germany', 'Germany')).toBe(true);
+        expect(isCorrectSpelling('germany', 'Germany')).toBe(false);
+        expect(isCorrectSpelling('Rhythm', 'rhythm')).toBe(false);
+        expect(isCorrectSpelling('Band-aid', 'Band-Aid')).toBe(false);
+    });
+
+    test('requires matching capitalization for each variant', () => {
+        expect(isCorrectSpelling('OK', 'OK, okay')).toBe(true);
+        expect(isCorrectSpelling('okay', 'OK, okay')).toBe(true);
+        expect(isCorrectSpelling('ok', 'OK, okay')).toBe(false);
+        expect(isCorrectSpelling('OKAY', 'OK, okay')).toBe(false);
     });
 
     test('ignores leading and trailing spaces', () => {
@@ -81,7 +91,16 @@ describe('isCorrectSpelling', () => {
         expect(isCorrectSpelling(composed, decomposed)).toBe(true);
     });
 
-    test('currently requires the accent', () => {
-        expect(isCorrectSpelling('eclair', 'éclair')).toBe(false);
+    // UIL does not count a missing or wrong accent as a miss.
+    test('ignores accents', () => {
+        expect(isCorrectSpelling('eclair', 'éclair')).toBe(true);
+        expect(isCorrectSpelling('éclair', 'éclair')).toBe(true);
+        expect(isCorrectSpelling('èclair', 'éclair')).toBe(true);
+        expect(isCorrectSpelling('Gruyere', 'Gruyère')).toBe(true);
+    });
+
+    test('still checks the letters and capitals around an accent', () => {
+        expect(isCorrectSpelling('gruyere', 'Gruyère')).toBe(false);
+        expect(isCorrectSpelling('eclare', 'éclair')).toBe(false);
     });
 });
