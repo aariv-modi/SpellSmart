@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import { View, StyleSheet, Dimensions, ScrollView, TouchableOpacity, Modal, TextInput, Alert, TouchableWithoutFeedback, Pressable, Platform } from 'react-native';
 import { getCustomListNames, getCustomListLengths, addList } from '../utils/HelperFunctions';
 import RecursiveText from '../components/RecursiveText';
@@ -25,15 +26,17 @@ const ListsScreen = ({ navigation }) => {
     const [isNameModalVisible, setIsNameModalVisible] = useState(false);
     const [newListName, setNewListName] = useState('');
 
-    useEffect(() => {
-        const fetchData = async () => {
-            const names = await getCustomListNames();
-            setListNames(names);
-            const lengths = await getCustomListLengths();
-            setListLengths(lengths);
-        };
-        fetchData();
-    }, [listNames]);
+    const loadLists = useCallback(async () => {
+        setListNames(await getCustomListNames());
+        setListLengths(await getCustomListLengths());
+    }, []);
+
+    // Reload on focus so lists added or edited on other screens show up.
+    useFocusEffect(
+        useCallback(() => {
+            loadLists();
+        }, [loadLists])
+    );
 
     const handlePick = (key) => {
         setIsPickerVisible(false);
@@ -54,7 +57,7 @@ const ListsScreen = ({ navigation }) => {
         }
 
         await addList(trimmed);
-        setListNames([...listNames, trimmed]);
+        await loadLists();
         setNewListName('');
         setIsNameModalVisible(false);
     };
@@ -86,7 +89,7 @@ const ListsScreen = ({ navigation }) => {
                                 title={item}
                                 length={listLengths[index]}
                                 style={{ marginTop: space.md }}
-                                updateListNames={setListNames}
+                                onListsChanged={loadLists}
                             />
                         ))}
                     </View>

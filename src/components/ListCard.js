@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { StyleSheet, Dimensions, Pressable, View, Modal, TextInput, TouchableOpacity, TouchableWithoutFeedback } from "react-native";
+import { StyleSheet, Dimensions, Pressable, View, Modal, TextInput, TouchableOpacity, TouchableWithoutFeedback, Alert } from "react-native";
 import { Ionicons } from '@expo/vector-icons'
 import { updateListName, deleteList, getCustomListNames } from './../utils/HelperFunctions'
 import RecursiveText from "./RecursiveText";
@@ -87,20 +87,35 @@ const DeleteModal = ({ visible, onClose, listName, onDelete }) => (
     </Modal>
 );
 
-const ListCard = ({ title, length, onTouch, updateListNames, style = {} }) => {
+const ListCard = ({ title, length, onTouch, onListsChanged, style = {} }) => {
     const [isRenameModalVisible, setIsRenameModalVisible] = useState(false);
     const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
     const [newListName, setNewListName] = useState(title);
 
+    const openRename = () => {
+        setNewListName(title);
+        setIsRenameModalVisible(true);
+    };
+
     const handleRename = async () => {
-        await updateListName(title, newListName);
+        const trimmed = newListName.trim();
+        if (!trimmed || trimmed === title) {
+            setIsRenameModalVisible(false);
+            return;
+        }
+        if ((await getCustomListNames()).includes(trimmed)) {
+            Alert.alert('A list with this name already exists.');
+            return;
+        }
+        await updateListName(title, trimmed);
         setIsRenameModalVisible(false);
+        onListsChanged();
     };
 
     const handleDelete = async () => {
-        await deleteList(newListName);
-        updateListNames(await getCustomListNames());
+        await deleteList(title);
         setIsDeleteModalVisible(false);
+        onListsChanged();
     };
 
     return (
@@ -112,13 +127,13 @@ const ListCard = ({ title, length, onTouch, updateListNames, style = {} }) => {
                 <View style={[styles.card, { backgroundColor: '#333333' }, style]}>
                     <View style={styles.cardContent}>
                         <View style={styles.textContainer}>
-                            <RecursiveText text={newListName} style={styles.listTitle} />
+                            <RecursiveText text={title} style={styles.listTitle} />
                             <RecursiveText text={`${length} words`} style={styles.listSubtitle} />
                         </View>
                         <View style={styles.iconContainer}>
                             <CardButton 
                                 icon="create" 
-                                onPress={() => setIsRenameModalVisible(true)} 
+                                onPress={openRename} 
                             />
                             <CardButton 
                                 icon="trash" 
@@ -140,7 +155,7 @@ const ListCard = ({ title, length, onTouch, updateListNames, style = {} }) => {
             <DeleteModal
                 visible={isDeleteModalVisible}
                 onClose={() => setIsDeleteModalVisible(false)}
-                listName={newListName}
+                listName={title}
                 onDelete={handleDelete}
             />
         </>
